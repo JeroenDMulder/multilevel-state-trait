@@ -1,0 +1,42 @@
+---
+title: "State-Trait Models: Long- vs. Wide-Format Approaches"
+author: '[Jeroen Mulder](https://www.uu.nl/medewerkers/JDMulder) and [Ellen Hamaker](https://www.uu.nl/medewerkers/ELHamaker)
+  - Utrecht University, the Netherlands'
+---
+
+---
+
+This website is a supplement to "From long to wide, and back again: State and trait research from a multilevel perspective" by Mulder and Hamaker (under review). It contains *lavaan* code and Mplus syntax for specifying the below four state-trait models in long-format (a multilevel perspective) and wide-format (a structural equation modeling perspective):
+
+1. the common and unique trait state model (CUTS; also known as the orthogonal method factors model),
+2. the correlated uniqueness model (CU),
+3. the indicator trait model (IT), and
+4. the reference indicator model (RI; also known as the M-1 model). 
+
+Use the top menu to navigate to the [*lavaan code*](https://jeroendmulder.github.io/multilevel-state-trait/lavaan.html), [Mplus syntax](https://jeroendmulder.github.io/multilevel-state-trait/mplus.html), or frequently asked questions (FAQ). The *lavaan (R)* tab contains additional code that was used for data cleaning and producing the plots in the main paper. The [*Preparation (R)*](https://jeroendmulder.github.io/multilevel-state-trait/preparation.html) tab contains information on, and the R code that was used for, preparing the data before fitting the models. 
+
+---
+
+### Data 
+For the empirical example in the paper, we used 5 waves of data from the Longitudinal Internet studies for the Social Sciences (LISS) panel collected between 2008 and 2012, specifically responses to the Satisfaction with Life Scale by [Diener, Emmons, Larsen, and Griffin (1985)](https://doi.org/10.1207/s15327752jpa4901_13). This scale contains the following 5 items:
+
+- `IDEA` = "In most ways my life is close to my ideal."
+- `UITS` = "The conditions of my life are excellent."
+- `TEVR` = "I am satisfied with my life."
+- `BELA` = "So far I have gotten the important things I want in life."
+- `VERA` = "If I could live my life over, I would change almost nothing."
+
+More information about the LISS panel and the data can be obtained can be found at [https://www.lissdata.nl](https://www.lissdata.nl).
+
+---
+
+### News
+
+|                  |                                                                                                |
+| -----------------------|:---------------------------------------------------------------------------------------| 
+| **August 31st, 2021** | Publish supplementary materials online. 
+
+---
+
+### Contact
+Questions can be addressed to the first author of the corresponding article, [Jeroen Mulder](mailto:j.d.mulder@uu.nl).

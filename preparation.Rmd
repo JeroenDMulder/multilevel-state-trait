@@ -1,0 +1,88 @@
+---
+title: "Data cleaning and preparation (R)"
+---
+
+---
+
+The raw LISS data was cleaned and prepared before the models were fitted. Below you can find the R code that was used. The most important steps are:
+
+- selection of variables and waves of data,
+- selecting of a single individual from each household,
+- renaming the variables in the data set, 
+- inspecting missingness patterns and deleting individuals with only missing values, and
+- restructuring the data into long-format. 
+
+
+```{r setup, message=F, warning=F}
+library(dplyr)
+library(tidyr)
+library(lavaan)
+library(Hmisc) # Import SPSS files
+library(visdat) # Visualize missing data
+library(sjlabelled) # Working with labeled data (often imported from SPSS)
+library(panelr) # Tools for wrangling panel data
+```
+
+```{r data, eval=F}
+# Import sample characteristics files
+# samp08 <- spss.get("./data/LISS/Wave 1/avars_200801_EN_2.0p.sav", use.value.labels = F, allow = c("_"))
+
+# Import data files
+dat.liss08 <- spss.get("C:/Users/5879167/surfdrive/Research/CUTS/data/LISS/Wave 1/cp08a_1p_EN.sav", use.value.labels = F, allow = c("_"))
+dat.liss09 <- spss.get("C:/Users/5879167/surfdrive/Research/CUTS/data/LISS/Wave 2/cp09b_1.0p_EN.sav", use.value.labels = F, allow = c("_"))
+dat.liss10 <- spss.get("C:/Users/5879167/surfdrive/Research/CUTS/data/LISS/Wave 3/cp10c_1.0p_EN.sav", use.value.labels = F, allow = c("_"))
+dat.liss11 <- spss.get("C:/Users/5879167/surfdrive/Research/CUTS/data/LISS/Wave 4/cp11d_1.0p_EN.sav", use.value.labels = F, allow = c("_"))
+dat.liss12 <- spss.get("C:/Users/5879167/surfdrive/Research/CUTS/data/LISS/Wave 5/cp12e_1.0p_EN.sav", use.value.labels = F, allow = c("_"))
+
+# Merge all files based on household member id (nomem_encr)
+dat.liss <- dat.liss08 %>%
+  full_join(dat.liss09, by = "nomem_encr") %>%
+  full_join(dat.liss10, by = "nomem_encr") %>%
+  full_join(dat.liss11, by = "nomem_encr") %>%
+  full_join(dat.liss12, by = "nomem_encr") %>%
+  # Select Diener's Satisfaction with Life Scale
+  select(nomem_encr, nohouse_encr.x,
+         , num_range(prefix = "cp08a0", range = 14:18)
+         , num_range(prefix = "cp09b0", range = 14:18)
+         , num_range(prefix = "cp10c0", range = 14:18)
+         , num_range(prefix = "cp11d0", range = 14:18)
+         , num_range(prefix = "cp12e0", range = 14:18))
+
+# Randomly select a single individual from each household
+set.seed(12345)
+dat.liss <- dat.liss %>%
+  group_by(nohouse_encr.x) %>%
+  sample_n(1) %>%
+  ungroup()
+
+# Explore missingness in the data
+vis_miss(select(dat.liss, ends_with("014"))) # Select question 014 for missingness 
+
+# Data characteristics I
+nT <- 5 # Number of waves
+M <- 5 # Number of indicators
+
+# Create column names
+names.item <- c("IDEA", "UITS", "TEVR", "BELA", "VERA")
+waves <- paste0("_", 1:nT)
+x <- expand.grid(names.item, waves)
+names <- paste0(x[,1], x[,2])
+
+## Rename columns
+names(dat.liss) <- c("person", "house", names)
+dat.liss <- remove_all_labels(dat.liss) # Remove labels
+dat.liss <- dat.liss %>% filter_at(vars(IDEA_1:VERA_5), any_vars(!is.na(.))) # Remove rows with all missing (if any) 
+
+# Data characteristics II
+n <- nrow(dat.liss)
+
+## Create long format 
+dat.liss.long <- long_panel(dat.liss
+                            , prefix = "_"
+                            , begin = 1
+                            , end = 5
+                            , label_location = "end")
+```
+
+---
+

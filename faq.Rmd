@@ -1,0 +1,25 @@
+---
+title: "Frequently Asked Questions"
+output: 
+  html_document:
+    toc:  true
+    toc_float: true
+---
+
+<script>
+function showHide(element) {
+    var x = document.getElementById(element);
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
+</script>
+
+---
+
+Below you can find a list of frequently asked questions, organized by topic, that reach us via email. Click the question to see our response.
+
+---
+

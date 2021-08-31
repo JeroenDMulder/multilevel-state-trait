@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Using lavaan (R)</title>
+
+<script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+<link rel="stylesheet" href="multilevel-state-trait.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">State-trait research: Long vs. wide</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="preparation.html">Preparation (R)</a>
+</li>
+<li>
+  <a href="lavaan.html">lavaan (R)</a>
+</li>
+<li>
+  <a href="mplus.html">Mplus</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Using lavaan (R)</h1>
+
+</div>
+
+
+<hr />
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>Below you can find code for specifying the state-trait models using <em>lavaan</em> in R. For SEM models with and without stationarity constraints, the data must be specified in wide-format. For ML-SEM models, data must be specified in long-format.</p>
+<hr />
+</div>
+<div id="common-unique-trait-state-model" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">Common Unique Trait State model</h2>
+<div id="sem-cuts" class="section level3">
+<h3>SEM CUTS</h3>
+<pre class="r"><code>sem.cuts &lt;- &#39;
+  # Common trait factor loadings
+  CT =~ IDEA_1 + UITS_1 + TEVR_1 + BELA_1 + VERA_1 + 
+        IDEA_2 + UITS_2 + TEVR_2 + BELA_2 + VERA_2 +
+        IDEA_3 + UITS_3 + TEVR_3 + BELA_3 + VERA_3 +
+        IDEA_4 + UITS_4 + TEVR_4 + BELA_4 + VERA_4 + 
+        IDEA_5 + UITS_5 + TEVR_5 + BELA_5 + VERA_5
+        
+  # Common trait variance
+  CT ~~ CT
+  
+  # Unique traits factor loadings
+  UT_IDEA =~ IDEA_1 + IDEA_2 + IDEA_3 + IDEA_4 + IDEA_5
+  UT_UITS =~ UITS_1 + UITS_2 + UITS_3 + UITS_4 + UITS_5  
+  UT_TEVR =~ TEVR_1 + TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 
+  UT_BELA =~ BELA_1 + BELA_2 + BELA_3 + BELA_4 + BELA_5
+  UT_VERA =~ VERA_1 + VERA_2 + VERA_3 + VERA_4 + VERA_5
+  
+  # Unique trait variances
+  UT_IDEA ~~ UT_IDEA
+  UT_UITS ~~ UT_UITS
+  UT_TEVR ~~ UT_TEVR
+  UT_BELA ~~ UT_BELA
+  UT_VERA ~~ UT_VERA
+  
+  # Common state factor loadings
+  CS1 =~ IDEA_1 + UITS_1 + TEVR_1 + BELA_1 + VERA_1  
+  CS2 =~ IDEA_2 + UITS_2 + TEVR_2 + BELA_2 + VERA_2 
+  CS3 =~ IDEA_3 + UITS_3 + TEVR_3 + BELA_3 + VERA_3
+  CS4 =~ IDEA_4 + UITS_4 + TEVR_4 + BELA_4 + VERA_4 
+  CS5 =~ IDEA_5 + UITS_5 + TEVR_5 + BELA_5 + VERA_5
+  
+  # Common state variances
+  CS1 ~~ CS1
+  CS2 ~~ CS2
+  CS3 ~~ CS3
+  CS4 ~~ CS4
+  CS5 ~~ CS5
+  
+  # Unique state variances (included by default)
+  
+  # Means (included by default through argument)
+&#39;
+
+fit.sem.cuts &lt;- sem(model = sem.cuts, data = dat.liss, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit.sem.cuts)</code></pre>
+<hr />
+</div>
+<div id="stationary-sem-cuts" class="section level3">
+<h3>Stationary SEM CUTS</h3>
+<pre class="r"><code>stationary.cuts &lt;- &#39;
+  # Common trait factor loadings (constrained)
+  CT =~ g1*IDEA_1 + g2*UITS_1 + g3*TEVR_1 + g4*BELA_1 + g5*VERA_1 + 
+        g1*IDEA_2 + g2*UITS_2 + g3*TEVR_2 + g4*BELA_2 + g5*VERA_2 +
+        g1*IDEA_3 + g2*UITS_3 + g3*TEVR_3 + g4*BELA_3 + g5*VERA_3 +
+        g1*IDEA_4 + g2*UITS_4 + g3*TEVR_4 + g4*BELA_4 + g5*VERA_4 + 
+        g1*IDEA_5 + g2*UITS_5 + g3*TEVR_5 + g4*BELA_5 + g5*VERA_5
+        
+  # Common trait variance
+  CT ~~ CT
+  
+  # Unique traits factor loadings (constrained)
+  UT_IDEA =~ 1*IDEA_1 + 1*IDEA_2 + 1*IDEA_3 + 1*IDEA_4 + 1*IDEA_5
+  UT_UITS =~ 1*UITS_1 + 1*UITS_2 + 1*UITS_3 + 1*UITS_4 + 1*UITS_5  
+  UT_TEVR =~ 1*TEVR_1 + 1*TEVR_2 + 1*TEVR_3 + 1*TEVR_4 + 1*TEVR_5 
+  UT_BELA =~ 1*BELA_1 + 1*BELA_2 + 1*BELA_3 + 1*BELA_4 + 1*BELA_5
+  UT_VERA =~ 1*VERA_1 + 1*VERA_2 + 1*VERA_3 + 1*VERA_4 + 1*VERA_5
+  
+  # Unique trait variances
+  UT_IDEA ~~ UT_IDEA
+  UT_UITS ~~ UT_UITS
+  UT_TEVR ~~ UT_TEVR
+  UT_BELA ~~ UT_BELA
+  UT_VERA ~~ UT_VERA
+  
+  # Common state factor loadings (constrained)
+  CS1 =~ k1*IDEA_1 + k2*UITS_1 + k3*TEVR_1 + k4*BELA_1 + k5*VERA_1  
+  CS2 =~ k1*IDEA_2 + k2*UITS_2 + k3*TEVR_2 + k4*BELA_2 + k5*VERA_2 
+  CS3 =~ k1*IDEA_3 + k2*UITS_3 + k3*TEVR_3 + k4*BELA_3 + k5*VERA_3
+  CS4 =~ k1*IDEA_4 + k2*UITS_4 + k3*TEVR_4 + k4*BELA_4 + k5*VERA_4 
+  CS5 =~ k1*IDEA_5 + k2*UITS_5 + k3*TEVR_5 + k4*BELA_5 + k5*VERA_5
+  
+  # Common state variances (constrained)
+  CS1 ~~ vcs*CS1
+  CS2 ~~ vcs*CS2
+  CS3 ~~ vcs*CS3
+  CS4 ~~ vcs*CS4
+  CS5 ~~ vcs*CS5
+  
+  # Unique state variances (constrained)
+  IDEA_1 ~~ vus1*IDEA_1
+  UITS_1 ~~ vus2*UITS_1
+  TEVR_1 ~~ vus3*TEVR_1
+  BELA_1 ~~ vus4*BELA_1
+  VERA_1 ~~ vus5*VERA_1 
+  
+  IDEA_2 ~~ vus1*IDEA_2
+  UITS_2 ~~ vus2*UITS_2
+  TEVR_2 ~~ vus3*TEVR_2
+  BELA_2 ~~ vus4*BELA_2
+  VERA_2 ~~ vus5*VERA_2 
+  
+  IDEA_3 ~~ vus1*IDEA_3
+  UITS_3 ~~ vus2*UITS_3
+  TEVR_3 ~~ vus3*TEVR_3
+  BELA_3 ~~ vus4*BELA_3
+  VERA_3 ~~ vus5*VERA_3 
+  
+  IDEA_4 ~~ vus1*IDEA_4
+  UITS_4 ~~ vus2*UITS_4
+  TEVR_4 ~~ vus3*TEVR_4
+  BELA_4 ~~ vus4*BELA_4
+  VERA_4 ~~ vus5*VERA_4 
+  
+  IDEA_5 ~~ vus1*IDEA_5
+  UITS_5 ~~ vus2*UITS_5
+  TEVR_5 ~~ vus3*TEVR_5
+  BELA_5 ~~ vus4*BELA_5
+  VERA_5 ~~ vus5*VERA_5 
+  
+  # Means (constrained)
+  IDEA_1 + IDEA_2 + IDEA_3 + IDEA_4 + IDEA_5 ~ m1*1
+  UITS_1 + UITS_2 + UITS_3 + UITS_4 + UITS_5 ~ m2*1
+  TEVR_1 + TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 ~ m3*1
+  BELA_1 + BELA_2 + BELA_3 + BELA_4 + BELA_5 ~ m4*1
+  VERA_1 + VERA_2 + VERA_3 + VERA_4 + VERA_5 ~ m5*1 
+&#39;
+
+fit.stationary.cuts &lt;- sem(model = stationary.cuts, data = dat.liss, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit.stationary.cuts)</code></pre>
+<hr />
+</div>
+<div id="ml-sem-cuts" class="section level3">
+<h3>ML-SEM CUTS</h3>
+<pre class="r"><code>mlsem.cuts &lt;- &#39;
+  level: 1
+      cs =~ IDEA + UITS + TEVR + BELA + VERA
+  level: 2
+      ct =~ IDEA + UITS + TEVR + BELA + VERA
+&#39;
+
+fit.mlsem.cuts &lt;- sem(model = mlsem.cuts, data = dat.liss.long, cluster = &quot;id&quot;)
+summary(fit.mlsem.cuts)</code></pre>
+<hr />
+</div>
+</div>
+<div id="correlated-uniqueness-model" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">Correlated Uniqueness model</h2>
+<div id="sem-cu" class="section level3">
+<h3>SEM CU</h3>
+<pre class="r"><code>sem.cu &lt;- &#39;
+  # Trait factor loadings
+  T =~ IDEA_1 + UITS_1 + TEVR_1 + BELA_1 + VERA_1 + 
+       IDEA_2 + UITS_2 + TEVR_2 + BELA_2 + VERA_2 +
+       IDEA_3 + UITS_3 + TEVR_3 + BELA_3 + VERA_3 +
+       IDEA_4 + UITS_4 + TEVR_4 + BELA_4 + VERA_4 + 
+       IDEA_5 + UITS_5 + TEVR_5 + BELA_5 + VERA_5
+        
+  # Trait factor variance
+  T ~~ T
+  
+  # State residual factor loadings
+  SR1 =~ IDEA_1 + UITS_1 + TEVR_1 + BELA_1 + VERA_1  
+  SR2 =~ IDEA_2 + UITS_2 + TEVR_2 + BELA_2 + VERA_2 
+  SR3 =~ IDEA_3 + UITS_3 + TEVR_3 + BELA_3 + VERA_3
+  SR4 =~ IDEA_4 + UITS_4 + TEVR_4 + BELA_4 + VERA_4 
+  SR5 =~ IDEA_5 + UITS_5 + TEVR_5 + BELA_5 + VERA_5
+  
+  # Common state variances
+  SR1 ~~ SR1
+  SR2 ~~ SR2
+  SR3 ~~ SR3
+  SR4 ~~ SR4
+  SR5 ~~ SR5
+  
+  # Correlated measurement errors between the same methods over time 
+  IDEA_1 ~~ IDEA_2 + IDEA_3 + IDEA_4 + IDEA_5
+  IDEA_2 ~~ IDEA_3 + IDEA_4 + IDEA_5
+  IDEA_3 ~~ IDEA_4 + IDEA_5
+  IDEA_4 ~~ IDEA_5
+  
+  UITS_1 ~~ UITS_2 + UITS_3 + UITS_4 + UITS_5  
+  UITS_2 ~~ UITS_3 + UITS_4 + UITS_5 
+  UITS_3 ~~ UITS_4 + UITS_5 
+  UITS_4 ~~ UITS_5 
+  
+  TEVR_1 ~~ TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 
+  TEVR_2 ~~ TEVR_3 + TEVR_4 + TEVR_5
+  TEVR_3 ~~ TEVR_4 + TEVR_5
+  TEVR_4 ~~ TEVR_5
+  
+  BELA_1 ~~ BELA_2 + BELA_3 + BELA_4 + BELA_5
+  BELA_2 ~~ BELA_3 + BELA_4 + BELA_5
+  BELA_3 ~~ BELA_4 + BELA_5
+  BELA_4 ~~ BELA_5
+  
+  VERA_1 ~~ VERA_2 + VERA_3 + VERA_4 + VERA_5
+  VERA_2 ~~ VERA_3 + VERA_4 + VERA_5
+  VERA_3 ~~ VERA_4 + VERA_5
+  VERA_4 ~~ VERA_5
+  
+   # Means (constrained)
+  IDEA_1 + IDEA_2 + IDEA_3 + IDEA_4 + IDEA_5 ~ m1*1
+  UITS_1 + UITS_2 + UITS_3 + UITS_4 + UITS_5 ~ m2*1
+  TEVR_1 + TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 ~ m3*1
+  BELA_1 + BELA_2 + BELA_3 + BELA_4 + BELA_5 ~ m4*1
+  VERA_1 + VERA_2 + VERA_3 + VERA_4 + VERA_5 ~ m5*1 
+&#39;
+
+fit.sem.cu &lt;- sem(model = sem.cu, data = dat.liss, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit.sem.cu)</code></pre>
+<hr />
+</div>
+<div id="stationary-sem-cu" class="section level3">
+<h3>Stationary SEM CU</h3>
+<pre class="r"><code>stationary.cu &lt;- &#39;
+  # Trait factor loadings
+  T =~ g1*IDEA_1 + g2*UITS_1 + g3*TEVR_1 + g4*BELA_1 + g5*VERA_1 + 
+       g1*IDEA_2 + g2*UITS_2 + g3*TEVR_2 + g4*BELA_2 + g5*VERA_2 +
+       g1*IDEA_3 + g2*UITS_3 + g3*TEVR_3 + g4*BELA_3 + g5*VERA_3 +
+       g1*IDEA_4 + g2*UITS_4 + g3*TEVR_4 + g4*BELA_4 + g5*VERA_4 + 
+       g1*IDEA_5 + g2*UITS_5 + g3*TEVR_5 + g4*BELA_5 + g5*VERA_5
+        
+  # Trait factor variance
+  T ~~ T
+  
+  # State Residual factor loadings (constrained)
+  SR1 =~ k1*IDEA_1 + k2*UITS_1 + k3*TEVR_1 + k4*BELA_1 + k5*VERA_1  
+  SR2 =~ k1*IDEA_2 + k2*UITS_2 + k3*TEVR_2 + k4*BELA_2 + k5*VERA_2 
+  SR3 =~ k1*IDEA_3 + k2*UITS_3 + k3*TEVR_3 + k4*BELA_3 + k5*VERA_3
+  SR4 =~ k1*IDEA_4 + k2*UITS_4 + k3*TEVR_4 + k4*BELA_4 + k5*VERA_4 
+  SR5 =~ k1*IDEA_5 + k2*UITS_5 + k3*TEVR_5 + k4*BELA_5 + k5*VERA_5
+  
+  # State Residual variances (constrained)
+  SR1 ~~ vcs*SR1
+  SR2 ~~ vcs*SR2
+  SR3 ~~ vcs*SR3
+  SR4 ~~ vcs*SR4
+  SR5 ~~ vcs*SR5
+  
+  # Unique state variances (constrained)
+  IDEA_1 ~~ vus1*IDEA_1
+  UITS_1 ~~ vus2*UITS_1
+  TEVR_1 ~~ vus3*TEVR_1
+  BELA_1 ~~ vus4*BELA_1
+  VERA_1 ~~ vus5*VERA_1 
+  
+  IDEA_2 ~~ vus1*IDEA_2
+  UITS_2 ~~ vus2*UITS_2
+  TEVR_2 ~~ vus3*TEVR_2
+  BELA_2 ~~ vus4*BELA_2
+  VERA_2 ~~ vus5*VERA_2 
+  
+  IDEA_3 ~~ vus1*IDEA_3
+  UITS_3 ~~ vus2*UITS_3
+  TEVR_3 ~~ vus3*TEVR_3
+  BELA_3 ~~ vus4*BELA_3
+  VERA_3 ~~ vus5*VERA_3 
+  
+  IDEA_4 ~~ vus1*IDEA_4
+  UITS_4 ~~ vus2*UITS_4
+  TEVR_4 ~~ vus3*TEVR_4
+  BELA_4 ~~ vus4*BELA_4
+  VERA_4 ~~ vus5*VERA_4 
+  
+  IDEA_5 ~~ vus1*IDEA_5
+  UITS_5 ~~ vus2*UITS_5
+  TEVR_5 ~~ vus3*TEVR_5
+  BELA_5 ~~ vus4*BELA_5
+  VERA_5 ~~ vus5*VERA_5
+  
+  # Correlated measurement errors between the same methods over time 
+  IDEA_1 ~~ cov1*IDEA_2 + cov1*IDEA_3 + cov1*IDEA_4 + cov1*IDEA_5
+  IDEA_2 ~~ cov1*IDEA_3 + cov1*IDEA_4 + cov1*IDEA_5
+  IDEA_3 ~~ cov1*IDEA_4 + cov1*IDEA_5
+  IDEA_4 ~~ cov1*IDEA_5
+  
+  UITS_1 ~~ cov2*UITS_2 + cov2*UITS_3 + cov2*UITS_4 + cov2*UITS_5  
+  UITS_2 ~~ cov2*UITS_3 + cov2*UITS_4 + cov2*UITS_5 
+  UITS_3 ~~ cov2*UITS_4 + cov2*UITS_5 
+  UITS_4 ~~ cov2*UITS_5 
+  
+  TEVR_1 ~~ cov3*TEVR_2 + cov3*TEVR_3 + cov3*TEVR_4 + cov3*TEVR_5 
+  TEVR_2 ~~ cov3*TEVR_3 + cov3*TEVR_4 + cov3*TEVR_5
+  TEVR_3 ~~ cov3*TEVR_4 + cov3*TEVR_5
+  TEVR_4 ~~ cov3*TEVR_5
+  
+  BELA_1 ~~ cov4*BELA_2 + cov4*BELA_3 + cov4*BELA_4 + cov4*BELA_5
+  BELA_2 ~~ cov4*BELA_3 + cov4*BELA_4 + cov4*BELA_5
+  BELA_3 ~~ cov4*BELA_4 + cov4*BELA_5
+  BELA_4 ~~ cov4*BELA_5
+  
+  VERA_1 ~~ cov5*VERA_2 + cov5*VERA_3 + cov5*VERA_4 + cov5*VERA_5
+  VERA_2 ~~ cov5*VERA_3 + cov5*VERA_4 + cov5*VERA_5
+  VERA_3 ~~ cov5*VERA_4 + cov5*VERA_5
+  VERA_4 ~~ cov5*VERA_5
+  
+  # Means (constrained)
+  IDEA_1 + IDEA_2 + IDEA_3 + IDEA_4 + IDEA_5 ~ m1*1
+  UITS_1 + UITS_2 + UITS_3 + UITS_4 + UITS_5 ~ m2*1
+  TEVR_1 + TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 ~ m3*1
+  BELA_1 + BELA_2 + BELA_3 + BELA_4 + BELA_5 ~ m4*1
+  VERA_1 + VERA_2 + VERA_3 + VERA_4 + VERA_5 ~ m5*1 
+&#39;
+
+fit.stationary.cu &lt;- sem(model = stationary.cu, data = dat.liss, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit.stationary.cu)</code></pre>
+<hr />
+</div>
+<div id="ml-sem-cu" class="section level3">
+<h3>ML-SEM CU</h3>
+<p>From an ML-SEM perspective, there is no statistical difference between the CU model and the CUTS model. Therefore, we specify the ML-SEM CU model in the same way as the ML-SEM CUTS model.</p>
+<hr />
+</div>
+</div>
+<div id="indicator-trait-model" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">Indicator Trait model</h2>
+<div id="sem-it" class="section level3">
+<h3>SEM IT</h3>
+<pre class="r"><code>sem.it &lt;- &#39;
+  # Indicator-specific trait factor loadings
+  IT_IDEA =~ IDEA_1 + IDEA_2 + IDEA_3 + IDEA_4 + IDEA_5
+  IT_UITS =~ UITS_1 + UITS_2 + UITS_3 + UITS_4 + UITS_5  
+  IT_TEVR =~ TEVR_1 + TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 
+  IT_BELA =~ BELA_1 + BELA_2 + BELA_3 + BELA_4 + BELA_5
+  IT_VERA =~ VERA_1 + VERA_2 + VERA_3 + VERA_4 + VERA_5
+  
+  # Unique trait variances and covariances
+  IT_IDEA ~~ IT_IDEA + IT_UITS + IT_TEVR + IT_BELA + IT_VERA
+  IT_UITS ~~ IT_UITS + IT_TEVR + IT_BELA + IT_VERA
+  IT_TEVR ~~ IT_TEVR + IT_BELA + IT_VERA
+  IT_BELA ~~ IT_BELA + IT_VERA
+  IT_VERA ~~ IT_VERA
+  
+  # Common state factor loadings
+  CS1 =~ IDEA_1 + UITS_1 + TEVR_1 + BELA_1 + VERA_1  
+  CS2 =~ IDEA_2 + UITS_2 + TEVR_2 + BELA_2 + VERA_2 
+  CS3 =~ IDEA_3 + UITS_3 + TEVR_3 + BELA_3 + VERA_3
+  CS4 =~ IDEA_4 + UITS_4 + TEVR_4 + BELA_4 + VERA_4 
+  CS5 =~ IDEA_5 + UITS_5 + TEVR_5 + BELA_5 + VERA_5
+  
+  # Common state variances
+  CS1 ~~ CS1
+  CS2 ~~ CS2
+  CS3 ~~ CS3
+  CS4 ~~ CS4
+  CS5 ~~ CS5
+  
+  # Unique state variances (included by default)
+  
+  # Means (included by default through argument)
+&#39;
+
+fit.sem.it &lt;- sem(model = sem.it, data = dat.liss, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit.sem.it)</code></pre>
+<hr />
+</div>
+<div id="stationary-sem-it" class="section level3">
+<h3>Stationary SEM IT</h3>
+<pre class="r"><code>stationary.it &lt;- &#39;
+  # Indicator-specific trait factor loadings
+  IT_IDEA =~ 1*IDEA_1 + 1*IDEA_2 + 1*IDEA_3 + 1*IDEA_4 + 1*IDEA_5
+  IT_UITS =~ 1*UITS_1 + 1*UITS_2 + 1*UITS_3 + 1*UITS_4 + 1*UITS_5  
+  IT_TEVR =~ 1*TEVR_1 + 1*TEVR_2 + 1*TEVR_3 + 1*TEVR_4 + 1*TEVR_5 
+  IT_BELA =~ 1*BELA_1 + 1*BELA_2 + 1*BELA_3 + 1*BELA_4 + 1*BELA_5
+  IT_VERA =~ 1*VERA_1 + 1*VERA_2 + 1*VERA_3 + 1*VERA_4 + 1*VERA_5
+  
+  # Unique trait variances and covariances
+  IT_IDEA ~~ IT_IDEA + IT_UITS + IT_TEVR + IT_BELA + IT_VERA
+  IT_UITS ~~ IT_UITS + IT_TEVR + IT_BELA + IT_VERA
+  IT_TEVR ~~ IT_TEVR + IT_BELA + IT_VERA
+  IT_BELA ~~ IT_BELA + IT_VERA
+  IT_VERA ~~ IT_VERA
+  
+  # Common state factor loadings (constrained)
+  CS1 =~ k1*IDEA_1 + k2*UITS_1 + k3*TEVR_1 + k4*BELA_1 + k5*VERA_1  
+  CS2 =~ k1*IDEA_2 + k2*UITS_2 + k3*TEVR_2 + k4*BELA_2 + k5*VERA_2 
+  CS3 =~ k1*IDEA_3 + k2*UITS_3 + k3*TEVR_3 + k4*BELA_3 + k5*VERA_3
+  CS4 =~ k1*IDEA_4 + k2*UITS_4 + k3*TEVR_4 + k4*BELA_4 + k5*VERA_4 
+  CS5 =~ k1*IDEA_5 + k2*UITS_5 + k3*TEVR_5 + k4*BELA_5 + k5*VERA_5
+  
+  # Common state variances (constrained)
+  CS1 ~~ vcs*CS1
+  CS2 ~~ vcs*CS2
+  CS3 ~~ vcs*CS3
+  CS4 ~~ vcs*CS4
+  CS5 ~~ vcs*CS5
+  
+  # Unique state variances (constrained)
+  IDEA_1 ~~ vus1*IDEA_1
+  UITS_1 ~~ vus2*UITS_1
+  TEVR_1 ~~ vus3*TEVR_1
+  BELA_1 ~~ vus4*BELA_1
+  VERA_1 ~~ vus5*VERA_1 
+  
+  IDEA_2 ~~ vus1*IDEA_2
+  UITS_2 ~~ vus2*UITS_2
+  TEVR_2 ~~ vus3*TEVR_2
+  BELA_2 ~~ vus4*BELA_2
+  VERA_2 ~~ vus5*VERA_2 
+  
+  IDEA_3 ~~ vus1*IDEA_3
+  UITS_3 ~~ vus2*UITS_3
+  TEVR_3 ~~ vus3*TEVR_3
+  BELA_3 ~~ vus4*BELA_3
+  VERA_3 ~~ vus5*VERA_3 
+  
+  IDEA_4 ~~ vus1*IDEA_4
+  UITS_4 ~~ vus2*UITS_4
+  TEVR_4 ~~ vus3*TEVR_4
+  BELA_4 ~~ vus4*BELA_4
+  VERA_4 ~~ vus5*VERA_4 
+  
+  IDEA_5 ~~ vus1*IDEA_5
+  UITS_5 ~~ vus2*UITS_5
+  TEVR_5 ~~ vus3*TEVR_5
+  BELA_5 ~~ vus4*BELA_5
+  VERA_5 ~~ vus5*VERA_5 
+  
+  # Means (constrained)
+  IDEA_1 + IDEA_2 + IDEA_3 + IDEA_4 + IDEA_5 ~ m1*1
+  UITS_1 + UITS_2 + UITS_3 + UITS_4 + UITS_5 ~ m2*1
+  TEVR_1 + TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 ~ m3*1
+  BELA_1 + BELA_2 + BELA_3 + BELA_4 + BELA_5 ~ m4*1
+  VERA_1 + VERA_2 + VERA_3 + VERA_4 + VERA_5 ~ m5*1 
+&#39;
+
+fit.stationary.it &lt;- sem(model = stationary.it, data = dat.liss, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit.stationary.it)</code></pre>
+<hr />
+</div>
+<div id="ml-sem-it" class="section level3">
+<h3>ML-SEM IT</h3>
+<pre class="r"><code>mlsem.it &lt;- &#39;
+  level: 1
+      cs =~ IDEA + UITS + TEVR + BELA + VERA
+  level: 2
+      IDEA ~~ IDEA + UITS + TEVR + BELA + VERA
+      UITS ~~ UITS + TEVR + BELA + VERA
+      TEVR ~~ TEVR + BELA + VERA
+      BELA ~~ BELA + VERA
+      VERA ~~ VERA
+&#39;
+
+fit.mlsem.it &lt;- sem(model = mlsem.it, data = dat.liss.long, cluster = &quot;id&quot;)
+summary(fit.mlsem.it)</code></pre>
+<hr />
+</div>
+</div>
+<div id="reference-indicator-model" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">Reference Indicator model</h2>
+<div id="sem-ri" class="section level3">
+<h3>SEM RI</h3>
+<pre class="r"><code>sem.RI &lt;- &#39;
+  # General factor loadings
+  G =~ IDEA_1 + UITS_1 + TEVR_1 + BELA_1 + VERA_1 + 
+       IDEA_2 + UITS_2 + TEVR_2 + BELA_2 + VERA_2 +
+       IDEA_3 + UITS_3 + TEVR_3 + BELA_3 + VERA_3 +
+       IDEA_4 + UITS_4 + TEVR_4 + BELA_4 + VERA_4 + 
+       IDEA_5 + UITS_5 + TEVR_5 + BELA_5 + VERA_5
+        
+  # General factor variance
+  G ~~ G
+  
+  # Trait Residual factor loadings
+  # IDEA serves as the reference indicator
+  TR_UITS =~ UITS_1 + UITS_2 + UITS_3 + UITS_4 + UITS_5  
+  TR_TEVR =~ TEVR_1 + TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 
+  TR_BELA =~ BELA_1 + BELA_2 + BELA_3 + BELA_4 + BELA_5
+  TR_VERA =~ VERA_1 + VERA_2 + VERA_3 + VERA_4 + VERA_5
+
+  # Trait Residual factor variances
+  TR_UITS ~~ TR_UITS
+  TR_TEVR ~~ TR_TEVR
+  TR_BELA ~~ TR_BELA
+  TR_VERA ~~ TR_VERA
+  
+  # Allow covariances between trait residual factors
+  TR_UITS ~~ TR_TEVR + TR_BELA + TR_VERA
+  TR_TEVR ~~ TR_BELA + TR_VERA
+  TR_BELA ~~ TR_VERA
+  
+  # Occasion factor loadings
+  O1 =~ IDEA_1 + UITS_1 + TEVR_1 + BELA_1 + VERA_1  
+  O2 =~ IDEA_2 + UITS_2 + TEVR_2 + BELA_2 + VERA_2 
+  O3 =~ IDEA_3 + UITS_3 + TEVR_3 + BELA_3 + VERA_3
+  O4 =~ IDEA_4 + UITS_4 + TEVR_4 + BELA_4 + VERA_4 
+  O5 =~ IDEA_5 + UITS_5 + TEVR_5 + BELA_5 + VERA_5
+  
+  # Common state variances
+  O1 ~~ O1
+  O2 ~~ O2
+  O3 ~~ O3
+  O4 ~~ O4
+  O5 ~~ O5
+  
+  # Unique state variances (included by default)
+  
+  # Means (included by default through argument)
+&#39;
+
+fit.sem.RI &lt;- sem(model = sem.RI, data = dat.liss, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit.sem.RI)</code></pre>
+<hr />
+</div>
+<div id="stationary-sem-ri" class="section level3">
+<h3>Stationary SEM RI</h3>
+<pre class="r"><code>stationary.RI &lt;- &#39;
+  # General factor loadings
+  G =~ g1*IDEA_1 + g2*UITS_1 + g3*TEVR_1 + g4*BELA_1 + g5*VERA_1 + 
+       g1*IDEA_2 + g2*UITS_2 + g3*TEVR_2 + g4*BELA_2 + g5*VERA_2 +
+       g1*IDEA_3 + g2*UITS_3 + g3*TEVR_3 + g4*BELA_3 + g5*VERA_3 +
+       g1*IDEA_4 + g2*UITS_4 + g3*TEVR_4 + g4*BELA_4 + g5*VERA_4 + 
+       g1*IDEA_5 + g2*UITS_5 + g3*TEVR_5 + g4*BELA_5 + g5*VERA_5
+        
+  # General factor variance
+  G ~~ G
+  
+  # Trait Residual factor loadings
+  # IDEA serves as the reference indicator
+  TR_UITS =~ 1*UITS_1 + 1*UITS_2 + 1*UITS_3 + 1*UITS_4 + 1*UITS_5  
+  TR_TEVR =~ 1*TEVR_1 + 1*TEVR_2 + 1*TEVR_3 + 1*TEVR_4 + 1*TEVR_5 
+  TR_BELA =~ 1*BELA_1 + 1*BELA_2 + 1*BELA_3 + 1*BELA_4 + 1*BELA_5
+  TR_VERA =~ 1*VERA_1 + 1*VERA_2 + 1*VERA_3 + 1*VERA_4 + 1*VERA_5
+
+  # Trait Residual factor variances
+  TR_UITS ~~ TR_UITS
+  TR_TEVR ~~ TR_TEVR
+  TR_BELA ~~ TR_BELA
+  TR_VERA ~~ TR_VERA
+  
+  # Allow covariances between trait residual factors
+  TR_UITS ~~ TR_TEVR + TR_BELA + TR_VERA
+  TR_TEVR ~~ TR_BELA + TR_VERA
+  TR_BELA ~~ TR_VERA
+  
+  # Common state factor loadings (constrained)
+  O1 =~ k1*IDEA_1 + k2*UITS_1 + k3*TEVR_1 + k4*BELA_1 + k5*VERA_1  
+  O2 =~ k1*IDEA_2 + k2*UITS_2 + k3*TEVR_2 + k4*BELA_2 + k5*VERA_2 
+  O3 =~ k1*IDEA_3 + k2*UITS_3 + k3*TEVR_3 + k4*BELA_3 + k5*VERA_3
+  O4 =~ k1*IDEA_4 + k2*UITS_4 + k3*TEVR_4 + k4*BELA_4 + k5*VERA_4 
+  O5 =~ k1*IDEA_5 + k2*UITS_5 + k3*TEVR_5 + k4*BELA_5 + k5*VERA_5
+  
+  # Common state variances (constrained)
+  O1 ~~ vcs*O1
+  O2 ~~ vcs*O2
+  O3 ~~ vcs*O3
+  O4 ~~ vcs*O4
+  O5 ~~ vcs*O5
+  
+  # Unique state variances (constrained)
+  IDEA_1 ~~ vus1*IDEA_1
+  UITS_1 ~~ vus2*UITS_1
+  TEVR_1 ~~ vus3*TEVR_1
+  BELA_1 ~~ vus4*BELA_1
+  VERA_1 ~~ vus5*VERA_1 
+  
+  IDEA_2 ~~ vus1*IDEA_2
+  UITS_2 ~~ vus2*UITS_2
+  TEVR_2 ~~ vus3*TEVR_2
+  BELA_2 ~~ vus4*BELA_2
+  VERA_2 ~~ vus5*VERA_2 
+  
+  IDEA_3 ~~ vus1*IDEA_3
+  UITS_3 ~~ vus2*UITS_3
+  TEVR_3 ~~ vus3*TEVR_3
+  BELA_3 ~~ vus4*BELA_3
+  VERA_3 ~~ vus5*VERA_3 
+  
+  IDEA_4 ~~ vus1*IDEA_4
+  UITS_4 ~~ vus2*UITS_4
+  TEVR_4 ~~ vus3*TEVR_4
+  BELA_4 ~~ vus4*BELA_4
+  VERA_4 ~~ vus5*VERA_4 
+  
+  IDEA_5 ~~ vus1*IDEA_5
+  UITS_5 ~~ vus2*UITS_5
+  TEVR_5 ~~ vus3*TEVR_5
+  BELA_5 ~~ vus4*BELA_5
+  VERA_5 ~~ vus5*VERA_5 
+  
+  # Means (constrained)
+  IDEA_1 + IDEA_2 + IDEA_3 + IDEA_4 + IDEA_5 ~ m1*1
+  UITS_1 + UITS_2 + UITS_3 + UITS_4 + UITS_5 ~ m2*1
+  TEVR_1 + TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 ~ m3*1
+  BELA_1 + BELA_2 + BELA_3 + BELA_4 + BELA_5 ~ m4*1
+  VERA_1 + VERA_2 + VERA_3 + VERA_4 + VERA_5 ~ m5*1 
+&#39;
+
+fit.stationary.RI &lt;- sem(model = stationary.RI, data = dat.liss, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit.stationary.RI)</code></pre>
+<hr />
+</div>
+<div id="ml-sem-ri" class="section level3">
+<h3>ML-SEM RI</h3>
+<pre class="r"><code>mlsem.RI &lt;- &#39;
+  level: 1
+      O =~ IDEA + UITS + TEVR + BELA + VERA
+  level: 2
+      G =~ IDEA + UITS + TEVR + BELA + VERA
+      
+      IDEA ~~ 0*IDEA
+      UITS ~~ UITS + TEVR + BELA + VERA
+      TEVR ~~ TEVR + BELA + VERA
+      BELA ~~ BELA + VERA
+      VERA ~~ VERA
+&#39;
+
+fit.mlsem.RI &lt;- sem(model = mlsem.RI, data = dat.liss.long, cluster = &quot;id&quot;)
+summary(fit.mlsem.RI)</code></pre>
+<hr />
+</div>
+</div>
+
+&nbsp;
+<hr />
+<!-- Add icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- Add font icons -->
+<p style="text-align: center;">
+    <a href="https://github.com/jeroendmulder/" class="fa fa-github"></a>
+    <a href="https://www.uu.nl/staff/JDMulder" class="fa fa-university"></a>
+</p>
+
+&nbsp;
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
