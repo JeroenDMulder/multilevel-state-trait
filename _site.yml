@@ -7,10 +7,10 @@ navbar:
       href: index.html
     - text: "Preparation (R)"
       href: preparation.html
-    - text: "lavaan (R)"
-      href: lavaan.html
-    - text: "Mplus"
-      href: mplus.html
+    - text: "Model input"
+      href: input.html
+    - text: "Model output"
+      href: output.html
 output:
   html_document:
     css: multilevel-state-trait.css

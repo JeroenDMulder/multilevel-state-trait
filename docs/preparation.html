@@ -13,7 +13,7 @@
 
 <title>Data cleaning and preparation (R)</title>
 
-<script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
@@ -249,10 +249,10 @@ $(document).ready(function () {
   <a href="preparation.html">Preparation (R)</a>
 </li>
 <li>
-  <a href="lavaan.html">lavaan (R)</a>
+  <a href="input.html">Model input</a>
 </li>
 <li>
-  <a href="mplus.html">Mplus</a>
+  <a href="output.html">Model output</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -272,80 +272,76 @@ $(document).ready(function () {
 
 
 <hr />
-<p>The raw LISS data was cleaned and prepared before the models were fitted. Below you can find the R code that was used. The most important steps are:</p>
+<p>The raw LISS data was cleaned and prepared before the models were fitted. Below you can find the <em>R</em> code that was used. The most important steps are:</p>
 <ul>
 <li>selection of variables and waves of data,</li>
-<li>selecting of a single individual from each household,</li>
+<li>random selection of a single individual from each household,</li>
 <li>renaming the variables in the data set,</li>
 <li>inspecting missingness patterns and deleting individuals with only missing values, and</li>
 <li>restructuring the data into long-format.</li>
 </ul>
 <pre class="r"><code>library(dplyr)
 library(tidyr)
-library(lavaan)
+library(ggplot2)
+library(data.table)
 library(Hmisc) # Import SPSS files
 library(visdat) # Visualize missing data
 library(sjlabelled) # Working with labeled data (often imported from SPSS)
-library(panelr) # Tools for wrangling panel data</code></pre>
+library(panelr) # Tools for wrangling panel data
+library(purrr)</code></pre>
 <pre class="r"><code># Import sample characteristics files
-# samp08 &lt;- spss.get(&quot;./data/LISS/Wave 1/avars_200801_EN_2.0p.sav&quot;, use.value.labels = F, allow = c(&quot;_&quot;))
-
-# Import data files
-dat.liss08 &lt;- spss.get(&quot;C:/Users/5879167/surfdrive/Research/CUTS/data/LISS/Wave 1/cp08a_1p_EN.sav&quot;, use.value.labels = F, allow = c(&quot;_&quot;))
-dat.liss09 &lt;- spss.get(&quot;C:/Users/5879167/surfdrive/Research/CUTS/data/LISS/Wave 2/cp09b_1.0p_EN.sav&quot;, use.value.labels = F, allow = c(&quot;_&quot;))
-dat.liss10 &lt;- spss.get(&quot;C:/Users/5879167/surfdrive/Research/CUTS/data/LISS/Wave 3/cp10c_1.0p_EN.sav&quot;, use.value.labels = F, allow = c(&quot;_&quot;))
-dat.liss11 &lt;- spss.get(&quot;C:/Users/5879167/surfdrive/Research/CUTS/data/LISS/Wave 4/cp11d_1.0p_EN.sav&quot;, use.value.labels = F, allow = c(&quot;_&quot;))
-dat.liss12 &lt;- spss.get(&quot;C:/Users/5879167/surfdrive/Research/CUTS/data/LISS/Wave 5/cp12e_1.0p_EN.sav&quot;, use.value.labels = F, allow = c(&quot;_&quot;))
-
-# Merge all files based on household member id (nomem_encr)
-dat.liss &lt;- dat.liss08 %&gt;%
-  full_join(dat.liss09, by = &quot;nomem_encr&quot;) %&gt;%
-  full_join(dat.liss10, by = &quot;nomem_encr&quot;) %&gt;%
-  full_join(dat.liss11, by = &quot;nomem_encr&quot;) %&gt;%
-  full_join(dat.liss12, by = &quot;nomem_encr&quot;) %&gt;%
-  # Select Diener&#39;s Satisfaction with Life Scale
-  select(nomem_encr, nohouse_encr.x,
-         , num_range(prefix = &quot;cp08a0&quot;, range = 14:18)
-         , num_range(prefix = &quot;cp09b0&quot;, range = 14:18)
-         , num_range(prefix = &quot;cp10c0&quot;, range = 14:18)
-         , num_range(prefix = &quot;cp11d0&quot;, range = 14:18)
-         , num_range(prefix = &quot;cp12e0&quot;, range = 14:18))
-
-# Randomly select a single individual from each household
-set.seed(12345)
-dat.liss &lt;- dat.liss %&gt;%
+set.seed(12345) # Seed for random selecting later in pipe
+dat_liss &lt;- map(c(&quot;./data/LISS/Wave 1/cp08a_1p_EN.sav&quot;, 
+                  &quot;./data/LISS/Wave 2/cp09b_1.0p_EN.sav&quot;,
+                  &quot;./data/LISS/Wave 3/cp10c_1.0p_EN.sav&quot;,
+                  &quot;./data/LISS/Wave 4/cp11d_1.0p_EN.sav&quot;,
+                  &quot;./data/LISS/Wave 5/cp12e_1.0p_EN.sav&quot;,
+                  &quot;./data/LISS/Wave 6/cp13f_EN_1.0p.sav&quot;,
+                  &quot;./data/LISS/Wave 7/cp14g_EN_1.0p.sav&quot;,
+                  &quot;./data/LISS/Wave 8/cp15h_EN_1.0p.sav&quot;),
+                spss.get, use.value.labels = F, allow = c(&quot;_&quot;)) %&gt;% 
+  reduce(full_join, by = &quot;nomem_encr&quot;) %&gt;%
   group_by(nohouse_encr.x) %&gt;%
-  sample_n(1) %&gt;%
-  ungroup()
+  sample_n(1) %&gt;% # Randomly select a single individual from each household
+  ungroup() 
 
+# Select Diener&#39;s Satisfaction with Life Scale from first 5 waves of data
+dat_LS &lt;- select(dat_liss, 
+                 nomem_encr,
+                 num_range(prefix = &quot;cp08a0&quot;, range = 14:18), 
+                 num_range(prefix = &quot;cp09b0&quot;, range = 14:18), 
+                 num_range(prefix = &quot;cp10c0&quot;, range = 14:18), 
+                 num_range(prefix = &quot;cp11d0&quot;, range = 14:18), 
+                 num_range(prefix = &quot;cp12e0&quot;, range = 14:18))
+  
 # Explore missingness in the data
-vis_miss(select(dat.liss, ends_with(&quot;014&quot;))) # Select question 014 for missingness 
+vis_miss(select(dat_LS, ends_with(&quot;014&quot;))) # Select question 014 for missingness 
 
 # Data characteristics I
-nT &lt;- 5 # Number of waves
+W &lt;- 5 # Number of waves
 M &lt;- 5 # Number of indicators
 
 # Create column names
-names.item &lt;- c(&quot;IDEA&quot;, &quot;UITS&quot;, &quot;TEVR&quot;, &quot;BELA&quot;, &quot;VERA&quot;)
-waves &lt;- paste0(&quot;_&quot;, 1:nT)
-x &lt;- expand.grid(names.item, waves)
-names &lt;- paste0(x[,1], x[,2])
+item_names &lt;- c(&quot;IDEA&quot;, &quot;UITS&quot;, &quot;TEVR&quot;, &quot;BELA&quot;, &quot;VERA&quot;)
+waves &lt;- paste0(&quot;_&quot;, 1:W)
+x &lt;- expand.grid(item_names, waves)
+var_names &lt;- paste0(x[,1], x[,2])
 
 ## Rename columns
-names(dat.liss) &lt;- c(&quot;person&quot;, &quot;house&quot;, names)
-dat.liss &lt;- remove_all_labels(dat.liss) # Remove labels
-dat.liss &lt;- dat.liss %&gt;% filter_at(vars(IDEA_1:VERA_5), any_vars(!is.na(.))) # Remove rows with all missing (if any) 
+names(dat_LS) &lt;- c(&quot;person&quot;, var_names)
+dat_LS &lt;- remove_all_labels(dat_LS) # Remove labels
+dat_LS &lt;- filter_at(dat_LS, vars(IDEA_1:VERA_5), any_vars(!is.na(.))) # Remove rows with all missing. 
 
 # Data characteristics II
-n &lt;- nrow(dat.liss)
+n &lt;- nrow(dat_LS)
 
 ## Create long format 
-dat.liss.long &lt;- long_panel(dat.liss
-                            , prefix = &quot;_&quot;
-                            , begin = 1
-                            , end = 5
-                            , label_location = &quot;end&quot;)</code></pre>
-<hr />
+dat_LS_long &lt;- long_panel(dat_LS, prefix = &quot;_&quot;, begin = 1, end = 5, label_location = &quot;end&quot;)
+
+# Export to Mplus
+write_dat &lt;- partial(fwrite, sep = &quot;\t&quot;, col.names = F, row.names = F, na = &quot;.&quot;) # Create partial function for quick use
+write_dat(dat_LS, file = &quot;./Mplus - Applied factor models/LISS_LS_wide.dat&quot;)
+write_dat(dat_LS_long, file = &quot;./Mplus - Applied factor models/LISS_LS_long.dat&quot;)</code></pre>
 
 &nbsp;
 <hr />

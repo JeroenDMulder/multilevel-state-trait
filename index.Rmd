@@ -1,19 +1,19 @@
 ---
-title: "State-Trait Models: Long- vs. Wide-Format Approaches"
+title: "State-trait research: MLM vs. SEM approaches"
 author: '[Jeroen Mulder](https://www.uu.nl/medewerkers/JDMulder) and [Ellen Hamaker](https://www.uu.nl/medewerkers/ELHamaker)
   - Utrecht University, the Netherlands'
 ---
 
 ---
 
-This website is a supplement to "From long to wide, and back again: State and trait research from a multilevel perspective" by Mulder and Hamaker (under review). It contains *lavaan* code and Mplus syntax for specifying the below four state-trait models in long-format (a multilevel perspective) and wide-format (a structural equation modeling perspective):
+This website is a supplement to "A multilevel perspective on the study of states and traits in panel data" by Mulder and Hamaker (under review). It contains *lavaan* (R) and Mplus model syntax and results for the simulations that were performed, and the four state-trait models that were discussed (in both the multilevel and structural equation modeling frameworks). These models include:
 
 1. the common and unique trait state model (CUTS; also known as the orthogonal method factors model),
-2. the correlated uniqueness model (CU),
-3. the indicator trait model (IT), and
-4. the reference indicator model (RI; also known as the M-1 model). 
+2. the indicator trait model (IT), 
+3. the reference indicator model (RI; also known as the M-1 model), and
+4. the correlated uniqueness model (CU).
 
-Use the top menu to navigate to the [*lavaan code*](https://jeroendmulder.github.io/multilevel-state-trait/lavaan.html), [Mplus syntax](https://jeroendmulder.github.io/multilevel-state-trait/mplus.html), or frequently asked questions (FAQ). The *lavaan (R)* tab contains additional code that was used for data cleaning and producing the plots in the main paper. The [*Preparation (R)*](https://jeroendmulder.github.io/multilevel-state-trait/preparation.html) tab contains information on, and the R code that was used for, preparing the data before fitting the models. 
+Use the top menu to navigate to the [R code that was used for preparing the empirical data for analysis](https://jeroendmulder.github.io/multilevel-state-trait/preparation.html), [model input files](https://jeroendmulder.github.io/multilevel-state-trait/input.html), and [output](https://jeroendmulder.github.io/multilevel-state-trait/out.html). 
 
 ---
 
@@ -34,7 +34,7 @@ More information about the LISS panel and the data can be obtained can be found 
 
 |                  |                                                                                                |
 | -----------------------|:---------------------------------------------------------------------------------------| 
-| **August 31st, 2021** | Publish supplementary materials online. 
+| **January 3rd, 2022** | Publish supplementary materials online. 
 
 ---
 

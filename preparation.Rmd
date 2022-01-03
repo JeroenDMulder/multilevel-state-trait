@@ -4,10 +4,10 @@ title: "Data cleaning and preparation (R)"
 
 ---
 
-The raw LISS data was cleaned and prepared before the models were fitted. Below you can find the R code that was used. The most important steps are:
+The raw LISS data was cleaned and prepared before the models were fitted. Below you can find the *R* code that was used. The most important steps are:
 
 - selection of variables and waves of data,
-- selecting of a single individual from each household,
+- random selection of a single individual from each household,
 - renaming the variables in the data set, 
 - inspecting missingness patterns and deleting individuals with only missing values, and
 - restructuring the data into long-format. 
@@ -16,73 +16,68 @@ The raw LISS data was cleaned and prepared before the models were fitted. Below 
 ```{r setup, message=F, warning=F}
 library(dplyr)
 library(tidyr)
-library(lavaan)
+library(ggplot2)
+library(data.table)
 library(Hmisc) # Import SPSS files
 library(visdat) # Visualize missing data
 library(sjlabelled) # Working with labeled data (often imported from SPSS)
 library(panelr) # Tools for wrangling panel data
+library(purrr)
 ```
 
 ```{r data, eval=F}
 # Import sample characteristics files
-# samp08 <- spss.get("./data/LISS/Wave 1/avars_200801_EN_2.0p.sav", use.value.labels = F, allow = c("_"))
-
-# Import data files
-dat.liss08 <- spss.get("C:/Users/5879167/surfdrive/Research/CUTS/data/LISS/Wave 1/cp08a_1p_EN.sav", use.value.labels = F, allow = c("_"))
-dat.liss09 <- spss.get("C:/Users/5879167/surfdrive/Research/CUTS/data/LISS/Wave 2/cp09b_1.0p_EN.sav", use.value.labels = F, allow = c("_"))
-dat.liss10 <- spss.get("C:/Users/5879167/surfdrive/Research/CUTS/data/LISS/Wave 3/cp10c_1.0p_EN.sav", use.value.labels = F, allow = c("_"))
-dat.liss11 <- spss.get("C:/Users/5879167/surfdrive/Research/CUTS/data/LISS/Wave 4/cp11d_1.0p_EN.sav", use.value.labels = F, allow = c("_"))
-dat.liss12 <- spss.get("C:/Users/5879167/surfdrive/Research/CUTS/data/LISS/Wave 5/cp12e_1.0p_EN.sav", use.value.labels = F, allow = c("_"))
-
-# Merge all files based on household member id (nomem_encr)
-dat.liss <- dat.liss08 %>%
-  full_join(dat.liss09, by = "nomem_encr") %>%
-  full_join(dat.liss10, by = "nomem_encr") %>%
-  full_join(dat.liss11, by = "nomem_encr") %>%
-  full_join(dat.liss12, by = "nomem_encr") %>%
-  # Select Diener's Satisfaction with Life Scale
-  select(nomem_encr, nohouse_encr.x,
-         , num_range(prefix = "cp08a0", range = 14:18)
-         , num_range(prefix = "cp09b0", range = 14:18)
-         , num_range(prefix = "cp10c0", range = 14:18)
-         , num_range(prefix = "cp11d0", range = 14:18)
-         , num_range(prefix = "cp12e0", range = 14:18))
-
-# Randomly select a single individual from each household
-set.seed(12345)
-dat.liss <- dat.liss %>%
+set.seed(12345) # Seed for random selecting later in pipe
+dat_liss <- map(c("./data/LISS/Wave 1/cp08a_1p_EN.sav", 
+                  "./data/LISS/Wave 2/cp09b_1.0p_EN.sav",
+                  "./data/LISS/Wave 3/cp10c_1.0p_EN.sav",
+                  "./data/LISS/Wave 4/cp11d_1.0p_EN.sav",
+                  "./data/LISS/Wave 5/cp12e_1.0p_EN.sav",
+                  "./data/LISS/Wave 6/cp13f_EN_1.0p.sav",
+                  "./data/LISS/Wave 7/cp14g_EN_1.0p.sav",
+                  "./data/LISS/Wave 8/cp15h_EN_1.0p.sav"),
+                spss.get, use.value.labels = F, allow = c("_")) %>% 
+  reduce(full_join, by = "nomem_encr") %>%
   group_by(nohouse_encr.x) %>%
-  sample_n(1) %>%
-  ungroup()
+  sample_n(1) %>% # Randomly select a single individual from each household
+  ungroup() 
 
+# Select Diener's Satisfaction with Life Scale from first 5 waves of data
+dat_LS <- select(dat_liss, 
+                 nomem_encr,
+                 num_range(prefix = "cp08a0", range = 14:18), 
+                 num_range(prefix = "cp09b0", range = 14:18), 
+                 num_range(prefix = "cp10c0", range = 14:18), 
+                 num_range(prefix = "cp11d0", range = 14:18), 
+                 num_range(prefix = "cp12e0", range = 14:18))
+  
 # Explore missingness in the data
-vis_miss(select(dat.liss, ends_with("014"))) # Select question 014 for missingness 
+vis_miss(select(dat_LS, ends_with("014"))) # Select question 014 for missingness 
 
 # Data characteristics I
-nT <- 5 # Number of waves
+W <- 5 # Number of waves
 M <- 5 # Number of indicators
 
 # Create column names
-names.item <- c("IDEA", "UITS", "TEVR", "BELA", "VERA")
-waves <- paste0("_", 1:nT)
-x <- expand.grid(names.item, waves)
-names <- paste0(x[,1], x[,2])
+item_names <- c("IDEA", "UITS", "TEVR", "BELA", "VERA")
+waves <- paste0("_", 1:W)
+x <- expand.grid(item_names, waves)
+var_names <- paste0(x[,1], x[,2])
 
 ## Rename columns
-names(dat.liss) <- c("person", "house", names)
-dat.liss <- remove_all_labels(dat.liss) # Remove labels
-dat.liss <- dat.liss %>% filter_at(vars(IDEA_1:VERA_5), any_vars(!is.na(.))) # Remove rows with all missing (if any) 
+names(dat_LS) <- c("person", var_names)
+dat_LS <- remove_all_labels(dat_LS) # Remove labels
+dat_LS <- filter_at(dat_LS, vars(IDEA_1:VERA_5), any_vars(!is.na(.))) # Remove rows with all missing. 
 
 # Data characteristics II
-n <- nrow(dat.liss)
+n <- nrow(dat_LS)
 
 ## Create long format 
-dat.liss.long <- long_panel(dat.liss
-                            , prefix = "_"
-                            , begin = 1
-                            , end = 5
-                            , label_location = "end")
-```
+dat_LS_long <- long_panel(dat_LS, prefix = "_", begin = 1, end = 5, label_location = "end")
 
----
+# Export to Mplus
+write_dat <- partial(fwrite, sep = "\t", col.names = F, row.names = F, na = ".") # Create partial function for quick use
+write_dat(dat_LS, file = "./Mplus - Applied factor models/LISS_LS_wide.dat")
+write_dat(dat_LS_long, file = "./Mplus - Applied factor models/LISS_LS_long.dat")
+```
 

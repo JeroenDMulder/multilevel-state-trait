@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Model input (lavaan (R) and Mplus)</title>
+
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+<link rel="stylesheet" href="multilevel-state-trait.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">State-trait research: Long vs. wide</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="preparation.html">Preparation (R)</a>
+</li>
+<li>
+  <a href="input.html">Model input</a>
+</li>
+<li>
+  <a href="output.html">Model output</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Model input (<em>lavaan</em> (R) and Mplus)</h1>
+
+</div>
+
+
+<hr />
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>Below you can find the model syntax for specifying the state-trait models, both in long- and wide-format, using <em>lavaan</em> (R) and Mplus. Here, you can also find model syntax for the additional analyses and simulations that were performed in the paper. For SEM models with and without stationarity constraints, the data must be specified in wide-format. For ML-SEM models, data must be specified in long-format.</p>
+<hr />
+</div>
+<div id="cuts-model" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">CUTS model</h2>
+<p>The tabs below contain <em>lavaan</em> and Mplus model syntax for the SEM CUTS model, the stationary SEM CUTS model, and the ML-SEM CUTS model.</p>
+<div id="sem-cuts" class="section level3">
+<h3>SEM CUTS</h3>
+<div id="lavaan" class="section level4">
+<h4><em>lavaan</em></h4>
+<pre class="r"><code>sem_cuts &lt;- &#39;
+  # Common trait factor loadings
+  CT =~ IDEA_1 + UITS_1 + TEVR_1 + BELA_1 + VERA_1 + 
+        IDEA_2 + UITS_2 + TEVR_2 + BELA_2 + VERA_2 +
+        IDEA_3 + UITS_3 + TEVR_3 + BELA_3 + VERA_3 +
+        IDEA_4 + UITS_4 + TEVR_4 + BELA_4 + VERA_4 + 
+        IDEA_5 + UITS_5 + TEVR_5 + BELA_5 + VERA_5
+        
+  # Common trait variance
+  CT ~~ CT
+  
+  # Unique traits factor loadings
+  UT_IDEA =~ IDEA_1 + IDEA_2 + IDEA_3 + IDEA_4 + IDEA_5
+  UT_UITS =~ UITS_1 + UITS_2 + UITS_3 + UITS_4 + UITS_5  
+  UT_TEVR =~ TEVR_1 + TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 
+  UT_BELA =~ BELA_1 + BELA_2 + BELA_3 + BELA_4 + BELA_5
+  UT_VERA =~ VERA_1 + VERA_2 + VERA_3 + VERA_4 + VERA_5
+  
+  # Unique trait variances
+  UT_IDEA ~~ UT_IDEA
+  UT_UITS ~~ UT_UITS
+  UT_TEVR ~~ UT_TEVR
+  UT_BELA ~~ UT_BELA
+  UT_VERA ~~ UT_VERA
+  
+  # Common state factor loadings
+  CS1 =~ IDEA_1 + UITS_1 + TEVR_1 + BELA_1 + VERA_1  
+  CS2 =~ IDEA_2 + UITS_2 + TEVR_2 + BELA_2 + VERA_2 
+  CS3 =~ IDEA_3 + UITS_3 + TEVR_3 + BELA_3 + VERA_3
+  CS4 =~ IDEA_4 + UITS_4 + TEVR_4 + BELA_4 + VERA_4 
+  CS5 =~ IDEA_5 + UITS_5 + TEVR_5 + BELA_5 + VERA_5
+  
+  # Common state variances
+  CS1 ~~ CS1
+  CS2 ~~ CS2
+  CS3 ~~ CS3
+  CS4 ~~ CS4
+  CS5 ~~ CS5
+  
+  # Unique state variances (included by default)
+  
+  # Means (included by default through `meanstructure = T` argument)
+&#39;
+
+fit_sem_cuts &lt;- sem(model = sem_cuts, data = dat_LS, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit_sem_cuts)</code></pre>
+</div>
+<div id="mplus" class="section level4">
+<h4>Mplus</h4>
+<pre><code>TITLE:      The SEM CUTS model.
+          
+DATA:       FILE = LISS_LS_wide.dat;
+    
+VARIABLE:   NAMES = person house 
+                    IDEA1 UITS1 TEVR1 BELA1 VERA1 
+                    IDEA2 UITS2 TEVR2 BELA2 VERA2 
+                    IDEA3 UITS3 TEVR3 BELA3 VERA3 
+                    IDEA4 UITS4 TEVR4 BELA4 VERA4
+                    IDEA5 UITS5 TEVR5 BELA5 VERA5; 
+            MISSING = .;
+            USEVARIABLES = IDEA1-VERA5;
+
+ANALYSIS:   MODEL = NOCOV;
+
+MODEL:      ! Common trait factor loadings 
+            CT BY IDEA1-VERA5; 
+
+            ! Common trait variance (default)
+            CT;
+            
+            ! Unique traits factor loadings
+            UT_IDEA BY IDEA1@1 IDEA2 IDEA3 IDEA4 IDEA5; 
+            UT_UITS BY UITS1@1 UITS2 UITS3 UITS4 UITS5;  
+            UT_TEVR BY TEVR1@1 TEVR2 TEVR3 TEVR4 TEVR5; 
+            UT_BELA BY BELA1@1 BELA2 BELA3 BELA4 BELA5;
+            UT_VERA BY VERA1@1 VERA2 VERA3 VERA4 VERA5;
+            
+            ! Unique trait variances (default)
+            UT_IDEA-UT_VERA;
+            
+            ! Common state factor loadings
+            CS1 BY IDEA1-VERA1;
+            CS2 BY IDEA2-VERA2;
+            CS3 BY IDEA3-VERA3;
+            CS4 BY IDEA4-VERA4;
+            CS5 BY IDEA5-VERA5;
+
+            ! Common state variance (default)
+            CS1-CS5;
+            
+            ! Unique state variances (default)
+            IDEA1-VERA5;
+    
+            ! Means
+            [IDEA1-VERA5];
+
+OUTPUT:     SAMPSTAT TECH1 ;</code></pre>
+<hr />
+</div>
+</div>
+<div id="stationary-sem-cuts" class="section level3">
+<h3>Stationary SEM CUTS</h3>
+<div id="lavaan-1" class="section level4">
+<h4><em>lavaan</em></h4>
+<pre class="r"><code>stationary_cuts &lt;- &#39;
+  # Common trait factor loadings (constrained)
+  CT =~ g1*IDEA_1 + g2*UITS_1 + g3*TEVR_1 + g4*BELA_1 + g5*VERA_1 + 
+        g1*IDEA_2 + g2*UITS_2 + g3*TEVR_2 + g4*BELA_2 + g5*VERA_2 +
+        g1*IDEA_3 + g2*UITS_3 + g3*TEVR_3 + g4*BELA_3 + g5*VERA_3 +
+        g1*IDEA_4 + g2*UITS_4 + g3*TEVR_4 + g4*BELA_4 + g5*VERA_4 + 
+        g1*IDEA_5 + g2*UITS_5 + g3*TEVR_5 + g4*BELA_5 + g5*VERA_5
+        
+  # Common trait variance
+  CT ~~ CT
+  
+  # Unique traits factor loadings (constrained)
+  UT_IDEA =~ 1*IDEA_1 + 1*IDEA_2 + 1*IDEA_3 + 1*IDEA_4 + 1*IDEA_5
+  UT_UITS =~ 1*UITS_1 + 1*UITS_2 + 1*UITS_3 + 1*UITS_4 + 1*UITS_5  
+  UT_TEVR =~ 1*TEVR_1 + 1*TEVR_2 + 1*TEVR_3 + 1*TEVR_4 + 1*TEVR_5 
+  UT_BELA =~ 1*BELA_1 + 1*BELA_2 + 1*BELA_3 + 1*BELA_4 + 1*BELA_5
+  UT_VERA =~ 1*VERA_1 + 1*VERA_2 + 1*VERA_3 + 1*VERA_4 + 1*VERA_5
+  
+  # Unique trait variances
+  UT_IDEA ~~ UT_IDEA
+  UT_UITS ~~ UT_UITS
+  UT_TEVR ~~ UT_TEVR
+  UT_BELA ~~ UT_BELA
+  UT_VERA ~~ UT_VERA
+  
+  # Common state factor loadings (constrained)
+  CS1 =~ k1*IDEA_1 + k2*UITS_1 + k3*TEVR_1 + k4*BELA_1 + k5*VERA_1  
+  CS2 =~ k1*IDEA_2 + k2*UITS_2 + k3*TEVR_2 + k4*BELA_2 + k5*VERA_2 
+  CS3 =~ k1*IDEA_3 + k2*UITS_3 + k3*TEVR_3 + k4*BELA_3 + k5*VERA_3
+  CS4 =~ k1*IDEA_4 + k2*UITS_4 + k3*TEVR_4 + k4*BELA_4 + k5*VERA_4 
+  CS5 =~ k1*IDEA_5 + k2*UITS_5 + k3*TEVR_5 + k4*BELA_5 + k5*VERA_5
+  
+  # Common state variances (constrained)
+  CS1 ~~ vcs*CS1
+  CS2 ~~ vcs*CS2
+  CS3 ~~ vcs*CS3
+  CS4 ~~ vcs*CS4
+  CS5 ~~ vcs*CS5
+  
+  # Unique state variances (constrained)
+  IDEA_1 ~~ vus1*IDEA_1
+  UITS_1 ~~ vus2*UITS_1
+  TEVR_1 ~~ vus3*TEVR_1
+  BELA_1 ~~ vus4*BELA_1
+  VERA_1 ~~ vus5*VERA_1 
+  
+  IDEA_2 ~~ vus1*IDEA_2
+  UITS_2 ~~ vus2*UITS_2
+  TEVR_2 ~~ vus3*TEVR_2
+  BELA_2 ~~ vus4*BELA_2
+  VERA_2 ~~ vus5*VERA_2 
+  
+  IDEA_3 ~~ vus1*IDEA_3
+  UITS_3 ~~ vus2*UITS_3
+  TEVR_3 ~~ vus3*TEVR_3
+  BELA_3 ~~ vus4*BELA_3
+  VERA_3 ~~ vus5*VERA_3 
+  
+  IDEA_4 ~~ vus1*IDEA_4
+  UITS_4 ~~ vus2*UITS_4
+  TEVR_4 ~~ vus3*TEVR_4
+  BELA_4 ~~ vus4*BELA_4
+  VERA_4 ~~ vus5*VERA_4 
+  
+  IDEA_5 ~~ vus1*IDEA_5
+  UITS_5 ~~ vus2*UITS_5
+  TEVR_5 ~~ vus3*TEVR_5
+  BELA_5 ~~ vus4*BELA_5
+  VERA_5 ~~ vus5*VERA_5 
+  
+  # Means (constrained)
+  IDEA_1 + IDEA_2 + IDEA_3 + IDEA_4 + IDEA_5 ~ m1*1
+  UITS_1 + UITS_2 + UITS_3 + UITS_4 + UITS_5 ~ m2*1
+  TEVR_1 + TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 ~ m3*1
+  BELA_1 + BELA_2 + BELA_3 + BELA_4 + BELA_5 ~ m4*1
+  VERA_1 + VERA_2 + VERA_3 + VERA_4 + VERA_5 ~ m5*1 
+&#39;
+
+fit_stationary_cuts &lt;- sem(model = stationary_cuts, data = dat_LS, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit_stationary_cuts)</code></pre>
+</div>
+<div id="mplus-1" class="section level4">
+<h4>Mplus</h4>
+<pre><code>TITLE:      The SEM CUTS model with stationarity constraints over time.
+          
+DATA:       FILE = LISS_LS_wide.dat;
+    
+VARIABLE:   NAMES = person house 
+                    IDEA1 UITS1 TEVR1 BELA1 VERA1 
+                    IDEA2 UITS2 TEVR2 BELA2 VERA2 
+                    IDEA3 UITS3 TEVR3 BELA3 VERA3 
+                    IDEA4 UITS4 TEVR4 BELA4 VERA4
+                    IDEA5 UITS5 TEVR5 BELA5 VERA5; 
+            MISSING = .;
+            USEVARIABLES = IDEA1-VERA5;
+
+ANALYSIS:   MODEL = NOCOV;
+
+MODEL:      ! Common trait factor loadings (constrained)
+            CT BY IDEA1@1 UITS1 TEVR1 BELA1 VERA1 (g1-g5); 
+            CT BY IDEA2@1 UITS2 TEVR2 BELA2 VERA2 (g1-g5); 
+            CT BY IDEA3@1 UITS3 TEVR3 BELA3 VERA3 (g1-g5);
+            CT BY IDEA4@1 UITS4 TEVR4 BELA4 VERA4 (g1-g5);
+            CT BY IDEA5@1 UITS5 TEVR5 BELA5 VERA5 (g1-g5);
+            
+            ! Common trait variance (default)
+            CT;
+            
+            ! Unique trait factor loadings (constrained)
+            UT_IDEA BY IDEA1@1 IDEA2@1 IDEA3@1 IDEA4@1 IDEA5@1; 
+            UT_UITS BY UITS1@1 UITS2@1 UITS3@1 UITS4@1 UITS5@1;  
+            UT_TEVR BY TEVR1@1 TEVR2@1 TEVR3@1 TEVR4@1 TEVR5@1; 
+            UT_BELA BY BELA1@1 BELA2@1 BELA3@1 BELA4@1 BELA5@1;
+            UT_VERA BY VERA1@1 VERA2@1 VERA3@1 VERA4@1 VERA5@1;
+            
+            ! Common state factor loadings (constrained) 
+            CS1 BY IDEA1 UITS1 TEVR1 BELA1 VERA1 (k1-k5);
+            CS2 BY IDEA2 UITS2 TEVR2 BELA2 VERA2 (k1-k5);
+            CS3 BY IDEA3 UITS3 TEVR3 BELA3 VERA3 (k1-k5);
+            CS4 BY IDEA4 UITS4 TEVR4 BELA4 VERA4 (k1-k5);
+            CS5 BY IDEA5 UITS5 TEVR5 BELA5 VERA5 (k1-k5);
+
+            ! Common state variances (constrained)
+            CS1-CS5 (vcs);
+            
+            ! Unique state variances (constrained) 
+            IDEA1 UITS1 TEVR1 BELA1 VERA1 (vus1-vus5); 
+            IDEA2 UITS2 TEVR2 BELA2 VERA2 (vus1-vus5);
+            IDEA3 UITS3 TEVR3 BELA3 VERA3 (vus1-vus5);
+            IDEA4 UITS4 TEVR4 BELA4 VERA4 (vus1-vus5);
+            IDEA5 UITS5 TEVR5 BELA5 VERA5 (vus1-vus5);
+    
+            ! Means (constrained) 
+            [IDEA1 UITS1 TEVR1 BELA1 VERA1] (m1-m5); 
+            [IDEA2 UITS2 TEVR2 BELA2 VERA2] (m1-m5);
+            [IDEA3 UITS3 TEVR3 BELA3 VERA3] (m1-m5);
+            [IDEA4 UITS4 TEVR4 BELA4 VERA4] (m1-m5);
+            [IDEA5 UITS5 TEVR5 BELA5 VERA5] (m1-m5);
+            
+OUTPUT:     SAMPSTAT TECH1;</code></pre>
+<hr />
+</div>
+</div>
+<div id="ml-sem-cuts" class="section level3">
+<h3>ML-SEM CUTS</h3>
+<div id="lavaan-2" class="section level4">
+<h4><em>lavaan</em></h4>
+<pre class="r"><code>mlsem_cuts &lt;- &#39;
+  level: 1
+      cs =~ IDEA + UITS + TEVR + BELA + VERA
+  level: 2
+      ct =~ IDEA + UITS + TEVR + BELA + VERA
+&#39;
+
+fit_mlsem_cuts &lt;- sem(model = mlsem_cuts, data = dat_LS_long, cluster = &quot;id&quot;)
+summary(fit_mlsem_cuts)</code></pre>
+</div>
+<div id="mplus-2" class="section level4">
+<h4>Mplus</h4>
+<pre><code>TITLE:      The SEM CUTS model with stationarity constraints over time.
+
+DATA:       FILE = LISS_LS_long.dat;
+    
+VARIABLE:   NAMES = id wave person house IDEA UITS TEVR BELA VERA;
+            USEVARIABLES = IDEA-VERA;
+            CLUSTER = id;
+            MISSING = .;
+
+ANALYSIS:   TYPE = TWOLEVEL;
+            ESTIMATOR = ML;
+
+MODEL:      %WITHIN%
+            CS BY IDEA-VERA;
+            
+            %BETWEEN%
+            CT BY IDEA-VERA;
+
+OUTPUT:     TECH1;</code></pre>
+<hr />
+</div>
+</div>
+</div>
+<div id="it-model" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">IT model</h2>
+<p>The tabs below contain <em>lavaan</em> and Mplus model syntax for the SEM IT model, the stationary SEM IT model, and the ML-SEM IT model.</p>
+<div id="sem-it" class="section level3">
+<h3>SEM IT</h3>
+<div id="lavaan-3" class="section level4">
+<h4><em>lavaan</em></h4>
+<pre class="r"><code>sem_it &lt;- &#39;
+  # Indicator-specific trait factor loadings
+  IT_IDEA =~ IDEA_1 + IDEA_2 + IDEA_3 + IDEA_4 + IDEA_5
+  IT_UITS =~ UITS_1 + UITS_2 + UITS_3 + UITS_4 + UITS_5  
+  IT_TEVR =~ TEVR_1 + TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 
+  IT_BELA =~ BELA_1 + BELA_2 + BELA_3 + BELA_4 + BELA_5
+  IT_VERA =~ VERA_1 + VERA_2 + VERA_3 + VERA_4 + VERA_5
+  
+  # Unique trait variances and covariances
+  IT_IDEA ~~ IT_IDEA + IT_UITS + IT_TEVR + IT_BELA + IT_VERA
+  IT_UITS ~~ IT_UITS + IT_TEVR + IT_BELA + IT_VERA
+  IT_TEVR ~~ IT_TEVR + IT_BELA + IT_VERA
+  IT_BELA ~~ IT_BELA + IT_VERA
+  IT_VERA ~~ IT_VERA
+  
+  # Common state factor loadings
+  CS1 =~ IDEA_1 + UITS_1 + TEVR_1 + BELA_1 + VERA_1  
+  CS2 =~ IDEA_2 + UITS_2 + TEVR_2 + BELA_2 + VERA_2 
+  CS3 =~ IDEA_3 + UITS_3 + TEVR_3 + BELA_3 + VERA_3
+  CS4 =~ IDEA_4 + UITS_4 + TEVR_4 + BELA_4 + VERA_4 
+  CS5 =~ IDEA_5 + UITS_5 + TEVR_5 + BELA_5 + VERA_5
+  
+  # Common state variances
+  CS1 ~~ CS1
+  CS2 ~~ CS2
+  CS3 ~~ CS3
+  CS4 ~~ CS4
+  CS5 ~~ CS5
+  
+  # Unique state variances (included by default)
+  
+  # Means (included by default through `meanstructure = T` argument)
+&#39;
+
+fit_sem_it &lt;- sem(model = sem_it, data = dat_LS, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit_sem_it)</code></pre>
+</div>
+<div id="mplus-3" class="section level4">
+<h4>Mplus</h4>
+<pre><code>TITLE:      The SEM IT model.
+          
+DATA:       FILE = LISS_LS_wide.dat;
+    
+VARIABLE:   NAMES = person house 
+                    IDEA1 UITS1 TEVR1 BELA1 VERA1 
+                    IDEA2 UITS2 TEVR2 BELA2 VERA2 
+                    IDEA3 UITS3 TEVR3 BELA3 VERA3 
+                    IDEA4 UITS4 TEVR4 BELA4 VERA4
+                    IDEA5 UITS5 TEVR5 BELA5 VERA5; 
+            MISSING = .;
+            USEVARIABLES = IDEA1-VERA5;
+
+ANALYSIS:   MODEL = NOCOV;
+
+MODEL:      ! Indicator-specific trait factor loadings
+            IT1 BY IDEA1@1 IDEA2 IDEA3 IDEA4 IDEA5;
+            IT2 BY UITS1@1 UITS2 UITS3 UITS4 UITS5;
+            IT3 BY TEVR1@1 TEVR2 TEVR3 TEVR4 TEVR5;
+            IT4 BY BELA1@1 BELA2 BELA3 BELA4 BELA5;
+            IT5 BY VERA1@1 VERA2 VERA3 VERA4 VERA5;
+            
+            ! Correlations between indicator-specific trait factors
+            IT1 WITH IT2-IT5;
+            IT2 WITH IT3-IT5;
+            IT3 WITH IT4 IT5;
+            IT4 WITH IT5;
+            
+            ! Common state factor loadings
+            CS1 BY IDEA1 UITS1 TEVR1 BELA1 VERA1;
+            CS2 BY IDEA2 UITS2 TEVR2 BELA2 VERA2;
+            CS3 BY IDEA3 UITS3 TEVR3 BELA3 VERA3;
+            CS4 BY IDEA4 UITS4 TEVR4 BELA4 VERA4;
+            CS5 BY IDEA5 UITS5 TEVR5 BELA5 VERA5;
+            
+            ! Unique states variances (default)
+            IDEA1-VERA5;
+
+OUTPUT:     SAMPSTAT  TECH1;
+</code></pre>
+<hr />
+</div>
+</div>
+<div id="stationary-sem-it" class="section level3">
+<h3>Stationary SEM IT</h3>
+<div id="lavaan-4" class="section level4">
+<h4><em>lavaan</em></h4>
+<pre class="r"><code>stationary_it &lt;- &#39;
+  # Indicator-specific trait factor loadings
+  IT_IDEA =~ 1*IDEA_1 + 1*IDEA_2 + 1*IDEA_3 + 1*IDEA_4 + 1*IDEA_5
+  IT_UITS =~ 1*UITS_1 + 1*UITS_2 + 1*UITS_3 + 1*UITS_4 + 1*UITS_5  
+  IT_TEVR =~ 1*TEVR_1 + 1*TEVR_2 + 1*TEVR_3 + 1*TEVR_4 + 1*TEVR_5 
+  IT_BELA =~ 1*BELA_1 + 1*BELA_2 + 1*BELA_3 + 1*BELA_4 + 1*BELA_5
+  IT_VERA =~ 1*VERA_1 + 1*VERA_2 + 1*VERA_3 + 1*VERA_4 + 1*VERA_5
+  
+  # Unique trait variances and covariances
+  IT_IDEA ~~ IT_IDEA + IT_UITS + IT_TEVR + IT_BELA + IT_VERA
+  IT_UITS ~~ IT_UITS + IT_TEVR + IT_BELA + IT_VERA
+  IT_TEVR ~~ IT_TEVR + IT_BELA + IT_VERA
+  IT_BELA ~~ IT_BELA + IT_VERA
+  IT_VERA ~~ IT_VERA
+  
+  # Common state factor loadings (constrained)
+  CS1 =~ k1*IDEA_1 + k2*UITS_1 + k3*TEVR_1 + k4*BELA_1 + k5*VERA_1  
+  CS2 =~ k1*IDEA_2 + k2*UITS_2 + k3*TEVR_2 + k4*BELA_2 + k5*VERA_2 
+  CS3 =~ k1*IDEA_3 + k2*UITS_3 + k3*TEVR_3 + k4*BELA_3 + k5*VERA_3
+  CS4 =~ k1*IDEA_4 + k2*UITS_4 + k3*TEVR_4 + k4*BELA_4 + k5*VERA_4 
+  CS5 =~ k1*IDEA_5 + k2*UITS_5 + k3*TEVR_5 + k4*BELA_5 + k5*VERA_5
+  
+  # Common state variances (constrained)
+  CS1 ~~ vcs*CS1
+  CS2 ~~ vcs*CS2
+  CS3 ~~ vcs*CS3
+  CS4 ~~ vcs*CS4
+  CS5 ~~ vcs*CS5
+  
+  # Unique state variances (constrained)
+  IDEA_1 ~~ vus1*IDEA_1
+  UITS_1 ~~ vus2*UITS_1
+  TEVR_1 ~~ vus3*TEVR_1
+  BELA_1 ~~ vus4*BELA_1
+  VERA_1 ~~ vus5*VERA_1 
+  
+  IDEA_2 ~~ vus1*IDEA_2
+  UITS_2 ~~ vus2*UITS_2
+  TEVR_2 ~~ vus3*TEVR_2
+  BELA_2 ~~ vus4*BELA_2
+  VERA_2 ~~ vus5*VERA_2 
+  
+  IDEA_3 ~~ vus1*IDEA_3
+  UITS_3 ~~ vus2*UITS_3
+  TEVR_3 ~~ vus3*TEVR_3
+  BELA_3 ~~ vus4*BELA_3
+  VERA_3 ~~ vus5*VERA_3 
+  
+  IDEA_4 ~~ vus1*IDEA_4
+  UITS_4 ~~ vus2*UITS_4
+  TEVR_4 ~~ vus3*TEVR_4
+  BELA_4 ~~ vus4*BELA_4
+  VERA_4 ~~ vus5*VERA_4 
+  
+  IDEA_5 ~~ vus1*IDEA_5
+  UITS_5 ~~ vus2*UITS_5
+  TEVR_5 ~~ vus3*TEVR_5
+  BELA_5 ~~ vus4*BELA_5
+  VERA_5 ~~ vus5*VERA_5 
+  
+  # Means (constrained)
+  IDEA_1 + IDEA_2 + IDEA_3 + IDEA_4 + IDEA_5 ~ m1*1
+  UITS_1 + UITS_2 + UITS_3 + UITS_4 + UITS_5 ~ m2*1
+  TEVR_1 + TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 ~ m3*1
+  BELA_1 + BELA_2 + BELA_3 + BELA_4 + BELA_5 ~ m4*1
+  VERA_1 + VERA_2 + VERA_3 + VERA_4 + VERA_5 ~ m5*1 
+&#39;
+
+fit_stationary_it &lt;- sem(model = stationary_it, data = dat_LS, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit_stationary_it)</code></pre>
+</div>
+<div id="mplus-4" class="section level4">
+<h4>Mplus</h4>
+<pre><code>TITLE:      The SEM IT model with stationarity constraints over time.
+          
+DATA:       FILE = LISS_LS_wide.dat;
+    
+VARIABLE:   NAMES = person house 
+                    IDEA1 UITS1 TEVR1 BELA1 VERA1 
+                    IDEA2 UITS2 TEVR2 BELA2 VERA2 
+                    IDEA3 UITS3 TEVR3 BELA3 VERA3 
+                    IDEA4 UITS4 TEVR4 BELA4 VERA4
+                    IDEA5 UITS5 TEVR5 BELA5 VERA5; 
+            MISSING = .;
+            USEVARIABLES = IDEA1-VERA5;
+
+ANALYSIS:   MODEL = NOCOV;
+
+MODEL:      ! Indicator-specific trait factor loadings
+            IT1 BY IDEA1@1 IDEA2@1 IDEA3@1 IDEA4@1 IDEA5@1;
+            IT2 BY UITS1@1 UITS2@1 UITS3@1 UITS4@1 UITS5@1;
+            IT3 BY TEVR1@1 TEVR2@1 TEVR3@1 TEVR4@1 TEVR5@1;
+            IT4 BY BELA1@1 BELA2@1 BELA3@1 BELA4@1 BELA5@1;
+              IT5 BY VERA1@1 VERA2@1 VERA3@1 VERA4@1 VERA5@1;
+    
+              ! Correlations between indicator-specific trait factors
+              IT1 WITH IT2-IT5;
+              IT2 WITH IT3-IT5;
+            IT3 WITH IT4 IT5;
+              IT4 WITH IT5;
+              
+              ! Common state factor loadings (constrained)
+              CS1 BY IDEA1 UITS1 TEVR1 BELA1 VERA1 (k1-k5);
+              CS2 BY IDEA2 UITS2 TEVR2 BELA2 VERA2 (k1-k5);
+              CS3 BY IDEA3 UITS3 TEVR3 BELA3 VERA3 (k1-k5);
+              CS4 BY IDEA4 UITS4 TEVR4 BELA4 VERA4 (k1-k5);
+            CS5 BY IDEA5 UITS5 TEVR5 BELA5 VERA5 (k1-k5);
+    
+            ! Common states variances (constrained)
+            CS1-CS5 (vcs);
+            
+            ! Unique states factor loadings (constrained)
+            IDEA1 UITS1 TEVR1 BELA1 VERA1 (vus1-vus5); 
+            IDEA2 UITS2 TEVR2 BELA2 VERA2 (vus1-vus5);
+            IDEA3 UITS3 TEVR3 BELA3 VERA3 (vus1-vus5);
+            IDEA4 UITS4 TEVR4 BELA4 VERA4 (vus1-vus5);
+            IDEA5 UITS5 TEVR5 BELA5 VERA5 (vus1-vus5);
+    
+            ! Means (constrained) 
+            [IDEA1 UITS1 TEVR1 BELA1 VERA1] (m1-m5); 
+            [IDEA2 UITS2 TEVR2 BELA2 VERA2] (m1-m5);
+            [IDEA3 UITS3 TEVR3 BELA3 VERA3] (m1-m5);
+            [IDEA4 UITS4 TEVR4 BELA4 VERA4] (m1-m5);
+            [IDEA5 UITS5 TEVR5 BELA5 VERA5] (m1-m5);
+
+OUTPUT:     SAMPSTAT TECH1; </code></pre>
+<hr />
+</div>
+</div>
+<div id="ml-sem-it" class="section level3">
+<h3>ML-SEM IT</h3>
+<div id="lavaan-5" class="section level4">
+<h4><em>lavaan</em></h4>
+<pre class="r"><code>mlsem_it &lt;- &#39;
+  level: 1
+      cs =~ IDEA + UITS + TEVR + BELA + VERA
+  level: 2
+      IDEA ~~ IDEA + UITS + TEVR + BELA + VERA
+      UITS ~~ UITS + TEVR + BELA + VERA
+      TEVR ~~ TEVR + BELA + VERA
+      BELA ~~ BELA + VERA
+      VERA ~~ VERA
+&#39;
+
+fit_mlsem_it &lt;- sem(model = mlsem_it, data = dat_LS_long, cluster = &quot;id&quot;)
+summary(fit_mlsem_it)</code></pre>
+</div>
+<div id="mplus-5" class="section level4">
+<h4>Mplus</h4>
+<pre><code>TITLE:      The ML-SEM IT model.
+
+DATA:       FILE = LISS_LS_long.dat;
+    
+VARIABLE:   NAMES = id wave person house IDEA UITS TEVR BELA VERA;
+            USEVARIABLES = IDEA-VERA;
+            CLUSTER = id;
+            MISSING = .;
+
+ANALYSIS:   TYPE = TWOLEVEL;
+            ESTIMATOR = ML;
+
+MODEL:      %WITHIN%
+            cs BY IDEA-VERA;
+            
+            %BETWEEN%
+            IDEA-VERA; ! Indicator-specific trait factors
+            
+            ! Correlations between IT factors
+            IDEA WITH UITS-VERA;
+            UITS WITH TEVR-VERA;
+            TEVR WITH BELA VERA;
+            BELA WITH VERA;
+
+OUTPUT:     SAMPSTAT TECH1;</code></pre>
+<hr />
+</div>
+</div>
+</div>
+<div id="ri-model" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">RI model</h2>
+<p>The tabs below contain <em>lavaan</em> and Mplus model syntax for the SEM RI model, the stationary SEM RI model, and the ML-SEM RI model.</p>
+<div id="sem-ri" class="section level3">
+<h3>SEM RI</h3>
+<div id="lavaan-6" class="section level4">
+<h4><em>lavaan</em></h4>
+<pre class="r"><code>sem_RI &lt;- &#39;
+  # General factor loadings
+  G =~ IDEA_1 + UITS_1 + TEVR_1 + BELA_1 + VERA_1 + 
+       IDEA_2 + UITS_2 + TEVR_2 + BELA_2 + VERA_2 +
+       IDEA_3 + UITS_3 + TEVR_3 + BELA_3 + VERA_3 +
+       IDEA_4 + UITS_4 + TEVR_4 + BELA_4 + VERA_4 + 
+       IDEA_5 + UITS_5 + TEVR_5 + BELA_5 + VERA_5
+        
+  # General factor variance
+  G ~~ G
+  
+  # Trait Residual factor loadings
+  # IDEA serves as the reference indicator
+  TR_UITS =~ UITS_1 + UITS_2 + UITS_3 + UITS_4 + UITS_5  
+  TR_TEVR =~ TEVR_1 + TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 
+  TR_BELA =~ BELA_1 + BELA_2 + BELA_3 + BELA_4 + BELA_5
+  TR_VERA =~ VERA_1 + VERA_2 + VERA_3 + VERA_4 + VERA_5
+
+  # Trait Residual factor variances
+  TR_UITS ~~ TR_UITS
+  TR_TEVR ~~ TR_TEVR
+  TR_BELA ~~ TR_BELA
+  TR_VERA ~~ TR_VERA
+  
+  # Allow covariances between trait residual factors
+  TR_UITS ~~ TR_TEVR + TR_BELA + TR_VERA
+  TR_TEVR ~~ TR_BELA + TR_VERA
+  TR_BELA ~~ TR_VERA
+  
+  # Occasion factor loadings
+  O1 =~ IDEA_1 + UITS_1 + TEVR_1 + BELA_1 + VERA_1  
+  O2 =~ IDEA_2 + UITS_2 + TEVR_2 + BELA_2 + VERA_2 
+  O3 =~ IDEA_3 + UITS_3 + TEVR_3 + BELA_3 + VERA_3
+  O4 =~ IDEA_4 + UITS_4 + TEVR_4 + BELA_4 + VERA_4 
+  O5 =~ IDEA_5 + UITS_5 + TEVR_5 + BELA_5 + VERA_5
+  
+  # Common state variances
+  O1 ~~ O1
+  O2 ~~ O2
+  O3 ~~ O3
+  O4 ~~ O4
+  O5 ~~ O5
+  
+  # Unique state variances (included by default)
+  
+  # Means (included by default through `meanstructure = T` argument)
+&#39;
+
+fit_sem_RI &lt;- sem(model = sem_RI, data = dat_LS, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit_sem_RI)</code></pre>
+</div>
+<div id="mplus-6" class="section level4">
+<h4>Mplus</h4>
+<pre><code>TITLE:      The SEM RI model.
+          
+DATA:       FILE = LISS_LS_wide.dat;
+    
+VARIABLE:   NAMES = person house 
+                    IDEA1 UITS1 TEVR1 BELA1 VERA1 
+                    IDEA2 UITS2 TEVR2 BELA2 VERA2 
+                    IDEA3 UITS3 TEVR3 BELA3 VERA3 
+                    IDEA4 UITS4 TEVR4 BELA4 VERA4
+                    IDEA5 UITS5 TEVR5 BELA5 VERA5; 
+            MISSING = .;
+            USEVARIABLES = IDEA1-VERA5;
+
+ANALYSIS:   MODEL = NOCOV;
+
+MODEL:      ! General factor factor loading
+            G BY IDEA1-VERA5;
+            
+            ! Trait residual factor loading
+            ! IDEA serves as the reference indicator
+            TR_UITS BY UITS1 UITS2 UITS3 UITS4 UITS5;
+            TR_TEVR BY TEVR1 TEVR2 TEVR3 TEVR4 TEVR5;
+            TR_BELA BY BELA1 BELA2 BELA3 BELA4 BELA5;
+            TR_VERA BY VERA1 VERA2 VERA3 VERA4 VERA5;
+
+            ! Allow covariances between trait residual factors
+            TR_UITS WITH TR_TEVR TR_BELA TR_VERA;
+            TR_TEVR WITH TR_BELA TR_VERA;
+            TR_BELA WITH TR_VERA;
+    
+              ! Occasion factors
+              O1 BY IDEA1-VERA1;
+              O2 BY IDEA2-VERA2;
+              O3 BY IDEA3-VERA3;
+              O4 BY IDEA4-VERA4;
+              O5 BY IDEA5-VERA5; 
+
+OUTPUT:     SAMPSTAT TECH1;</code></pre>
+<hr />
+</div>
+</div>
+<div id="stationary-sem-ri" class="section level3">
+<h3>Stationary SEM RI</h3>
+<div id="lavaan-7" class="section level4">
+<h4><em>lavaan</em></h4>
+<pre class="r"><code>stationary_RI &lt;- &#39;
+  # General factor loadings
+  G =~ g1*IDEA_1 + g2*UITS_1 + g3*TEVR_1 + g4*BELA_1 + g5*VERA_1 + 
+       g1*IDEA_2 + g2*UITS_2 + g3*TEVR_2 + g4*BELA_2 + g5*VERA_2 +
+       g1*IDEA_3 + g2*UITS_3 + g3*TEVR_3 + g4*BELA_3 + g5*VERA_3 +
+       g1*IDEA_4 + g2*UITS_4 + g3*TEVR_4 + g4*BELA_4 + g5*VERA_4 + 
+       g1*IDEA_5 + g2*UITS_5 + g3*TEVR_5 + g4*BELA_5 + g5*VERA_5
+        
+  # General factor variance
+  G ~~ G
+  
+  # Trait Residual factor loadings
+  # IDEA serves as the reference indicator
+  TR_UITS =~ 1*UITS_1 + 1*UITS_2 + 1*UITS_3 + 1*UITS_4 + 1*UITS_5  
+  TR_TEVR =~ 1*TEVR_1 + 1*TEVR_2 + 1*TEVR_3 + 1*TEVR_4 + 1*TEVR_5 
+  TR_BELA =~ 1*BELA_1 + 1*BELA_2 + 1*BELA_3 + 1*BELA_4 + 1*BELA_5
+  TR_VERA =~ 1*VERA_1 + 1*VERA_2 + 1*VERA_3 + 1*VERA_4 + 1*VERA_5
+
+  # Trait Residual factor variances
+  TR_UITS ~~ TR_UITS
+  TR_TEVR ~~ TR_TEVR
+  TR_BELA ~~ TR_BELA
+  TR_VERA ~~ TR_VERA
+  
+  # Allow covariances between trait residual factors
+  TR_UITS ~~ TR_TEVR + TR_BELA + TR_VERA
+  TR_TEVR ~~ TR_BELA + TR_VERA
+  TR_BELA ~~ TR_VERA
+  
+  # Common state factor loadings (constrained)
+  O1 =~ k1*IDEA_1 + k2*UITS_1 + k3*TEVR_1 + k4*BELA_1 + k5*VERA_1  
+  O2 =~ k1*IDEA_2 + k2*UITS_2 + k3*TEVR_2 + k4*BELA_2 + k5*VERA_2 
+  O3 =~ k1*IDEA_3 + k2*UITS_3 + k3*TEVR_3 + k4*BELA_3 + k5*VERA_3
+  O4 =~ k1*IDEA_4 + k2*UITS_4 + k3*TEVR_4 + k4*BELA_4 + k5*VERA_4 
+  O5 =~ k1*IDEA_5 + k2*UITS_5 + k3*TEVR_5 + k4*BELA_5 + k5*VERA_5
+  
+  # Common state variances (constrained)
+  O1 ~~ vcs*O1
+  O2 ~~ vcs*O2
+  O3 ~~ vcs*O3
+  O4 ~~ vcs*O4
+  O5 ~~ vcs*O5
+  
+  # Unique state variances (constrained)
+  IDEA_1 ~~ vus1*IDEA_1
+  UITS_1 ~~ vus2*UITS_1
+  TEVR_1 ~~ vus3*TEVR_1
+  BELA_1 ~~ vus4*BELA_1
+  VERA_1 ~~ vus5*VERA_1 
+  
+  IDEA_2 ~~ vus1*IDEA_2
+  UITS_2 ~~ vus2*UITS_2
+  TEVR_2 ~~ vus3*TEVR_2
+  BELA_2 ~~ vus4*BELA_2
+  VERA_2 ~~ vus5*VERA_2 
+  
+  IDEA_3 ~~ vus1*IDEA_3
+  UITS_3 ~~ vus2*UITS_3
+  TEVR_3 ~~ vus3*TEVR_3
+  BELA_3 ~~ vus4*BELA_3
+  VERA_3 ~~ vus5*VERA_3 
+  
+  IDEA_4 ~~ vus1*IDEA_4
+  UITS_4 ~~ vus2*UITS_4
+  TEVR_4 ~~ vus3*TEVR_4
+  BELA_4 ~~ vus4*BELA_4
+  VERA_4 ~~ vus5*VERA_4 
+  
+  IDEA_5 ~~ vus1*IDEA_5
+  UITS_5 ~~ vus2*UITS_5
+  TEVR_5 ~~ vus3*TEVR_5
+  BELA_5 ~~ vus4*BELA_5
+  VERA_5 ~~ vus5*VERA_5 
+  
+  # Means (constrained)
+  IDEA_1 + IDEA_2 + IDEA_3 + IDEA_4 + IDEA_5 ~ m1*1
+  UITS_1 + UITS_2 + UITS_3 + UITS_4 + UITS_5 ~ m2*1
+  TEVR_1 + TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 ~ m3*1
+  BELA_1 + BELA_2 + BELA_3 + BELA_4 + BELA_5 ~ m4*1
+  VERA_1 + VERA_2 + VERA_3 + VERA_4 + VERA_5 ~ m5*1 
+&#39;
+
+fit_stationary_RI &lt;- sem(model = stationary_RI, data = dat_LS, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit_stationary_RI)</code></pre>
+</div>
+<div id="mplus-7" class="section level4">
+<h4>Mplus</h4>
+<pre><code>TITLE:      The SEM RI model with stationary constraints over time.
+          
+DATA:       FILE = LISS_LS_wide.dat;
+    
+VARIABLE:   NAMES = person house 
+                    IDEA1 UITS1 TEVR1 BELA1 VERA1 
+                    IDEA2 UITS2 TEVR2 BELA2 VERA2 
+                    IDEA3 UITS3 TEVR3 BELA3 VERA3 
+                    IDEA4 UITS4 TEVR4 BELA4 VERA4
+                    IDEA5 UITS5 TEVR5 BELA5 VERA5; 
+            MISSING = .;
+            USEVARIABLES = IDEA1-VERA5;
+
+ANALYSIS:   MODEL = NOCOV;
+
+MODEL:      ! General factor (constrained)
+            G BY IDEA1@1 UITS1 TEVR1 BELA1 VERA1 (l1-l5);
+            G BY IDEA2@1 UITS2 TEVR2 BELA2 VERA2 (l1-l5);
+            G BY IDEA3@1 UITS3 TEVR3 BELA3 VERA3 (l1-l5);
+            G BY IDEA4@1 UITS4 TEVR4 BELA4 VERA4 (l1-l5);
+            G BY IDEA5@1 UITS5 TEVR5 BELA5 VERA5 (l1-l5);
+            
+            ! Trait residual factors (constrained)
+            ! IDEA serves as the reference indicator
+            TR_UITS BY UITS1@1 UITS2@1 UITS3@1 UITS4@1 UITS5@1;
+            TR_TEVR BY TEVR1@1 TEVR2@1 TEVR3@1 TEVR4@1 TEVR5@1;
+            TR_BELA BY BELA1@1 BELA2@1 BELA3@1 BELA4@1 BELA5@1;
+            TR_VERA BY VERA1@1 VERA2@1 VERA3@1 VERA4@1 VERA5@1;
+            
+            ! Covariances between method factors
+            TR_UITS WITH TR_TEVR TR_BELA TR_VERA;
+            TR_TEVR WITH TR_BELA TR_VERA;
+            TR_BELA WITH TR_VERA;
+            
+            ! Occasion factors (constrained)
+            O1 BY IDEA1@1 UITS1 TEVR1 BELA1 VERA1 (k1-k5);
+            O2 BY IDEA2@1 UITS2 TEVR2 BELA2 VERA2 (k1-k5);
+            O3 BY IDEA3@1 UITS3 TEVR3 BELA3 VERA3 (k1-k5);
+            O4 BY IDEA4@1 UITS4 TEVR4 BELA4 VERA4 (k1-k5);
+            O5 BY IDEA5@1 UITS5 TEVR5 BELA5 VERA5 (k1-k5);
+            
+            ! Occasion factor variances (constrained)
+            O1-O5 (omega);
+            
+            ! Measurement error variances (constrained)
+            IDEA1 UITS1 TEVR1 BELA1 VERA1 (sigma1-sigma5);
+            IDEA2 UITS2 TEVR2 BELA2 VERA2 (sigma1-sigma5);
+            IDEA3 UITS3 TEVR3 BELA3 VERA3 (sigma1-sigma5);
+            IDEA4 UITS4 TEVR4 BELA4 VERA4 (sigma1-sigma5);
+            IDEA5 UITS5 TEVR5 BELA5 VERA5 (sigma1-sigma5);
+            
+            ! Means (constrained)
+            [IDEA1 UITS1 TEVR1 BELA1 VERA1] (m1-m5);
+            [IDEA2 UITS2 TEVR2 BELA2 VERA2] (m1-m5);
+            [IDEA3 UITS3 TEVR3 BELA3 VERA3] (m1-m5);
+            [IDEA4 UITS4 TEVR4 BELA4 VERA4] (m1-m5);
+            [IDEA5 UITS5 TEVR5 BELA5 VERA5] (m1-m5);
+            
+OUTPUT:     SAMPSTAT TECH1;</code></pre>
+<hr />
+</div>
+</div>
+<div id="ml-sem-ri" class="section level3">
+<h3>ML-SEM RI</h3>
+<div id="lavaan-8" class="section level4">
+<h4><em>lavaan</em></h4>
+<pre class="r"><code>mlsem_RI &lt;- &#39;
+  level: 1
+      O =~ IDEA + UITS + TEVR + BELA + VERA
+  level: 2
+      G =~ IDEA + UITS + TEVR + BELA + VERA
+      
+      IDEA ~~ 0*IDEA
+      UITS ~~ UITS + TEVR + BELA + VERA
+      TEVR ~~ TEVR + BELA + VERA
+      BELA ~~ BELA + VERA
+      VERA ~~ VERA
+&#39;
+
+fit_mlsem_RI &lt;- sem(model = mlsem_RI, data = dat_LS_long, cluster = &quot;id&quot;)
+summary(fit_mlsem_RI)</code></pre>
+</div>
+<div id="mplus-8" class="section level4">
+<h4>Mplus</h4>
+<pre><code>TITLE:      The ML-SEM RI model.
+
+DATA:       FILE = LISS_LS_long.dat;
+    
+VARIABLE:   NAMES = id wave person house IDEA UITS TEVR BELA VERA;
+            USEVARIABLES = IDEA-VERA;
+            CLUSTER = id;
+            MISSING = .;
+
+ANALYSIS:   TYPE = TWOLEVEL;
+            ESTIMATOR = ML;
+
+MODEL:      %WITHIN%
+            O BY IDEA-VERA;
+            
+            %BETWEEN%
+            G BY IDEA-VERA;
+            
+            IDEA@0; ! IDEA serves as reference indicator
+            UITS-VERA; ! Include trait residual factors
+            UITS WITH TEVR-VERA; ! Include covariance between method residual factors
+            TEVR WITH BELA VERA;
+            BELA WITH VERA;
+    
+OUTPUT:     SAMPSTAT TECH1;</code></pre>
+<hr />
+</div>
+</div>
+</div>
+<div id="cu-model" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">CU model</h2>
+<p>The tabs below contain <em>lavaan</em> and Mplus model syntax for the SEM CU model, and the stationary SEM CU model. Within the long-format ML-SEM framework, it is not possible to specify correlations between residuals over time. Therefore, an ML-SEM CU model is not identified.</p>
+<div id="sem-cu" class="section level3">
+<h3>SEM CU</h3>
+<div id="lavaan-9" class="section level4">
+<h4><em>lavaan</em></h4>
+<pre class="r"><code>sem_cu &lt;- &#39;
+  # Trait factor loadings
+  T =~ IDEA_1 + UITS_1 + TEVR_1 + BELA_1 + VERA_1 + 
+       IDEA_2 + UITS_2 + TEVR_2 + BELA_2 + VERA_2 +
+       IDEA_3 + UITS_3 + TEVR_3 + BELA_3 + VERA_3 +
+       IDEA_4 + UITS_4 + TEVR_4 + BELA_4 + VERA_4 + 
+       IDEA_5 + UITS_5 + TEVR_5 + BELA_5 + VERA_5
+        
+  # Trait factor variance
+  T ~~ T
+  
+  # State residual factor loadings
+  SR1 =~ IDEA_1 + UITS_1 + TEVR_1 + BELA_1 + VERA_1  
+  SR2 =~ IDEA_2 + UITS_2 + TEVR_2 + BELA_2 + VERA_2 
+  SR3 =~ IDEA_3 + UITS_3 + TEVR_3 + BELA_3 + VERA_3
+  SR4 =~ IDEA_4 + UITS_4 + TEVR_4 + BELA_4 + VERA_4 
+  SR5 =~ IDEA_5 + UITS_5 + TEVR_5 + BELA_5 + VERA_5
+  
+  # Common state variances
+  SR1 ~~ SR1
+  SR2 ~~ SR2
+  SR3 ~~ SR3
+  SR4 ~~ SR4
+  SR5 ~~ SR5
+  
+  # Correlated measurement errors between the same methods over time 
+  IDEA_1 ~~ IDEA_2 + IDEA_3 + IDEA_4 + IDEA_5
+  IDEA_2 ~~ IDEA_3 + IDEA_4 + IDEA_5
+  IDEA_3 ~~ IDEA_4 + IDEA_5
+  IDEA_4 ~~ IDEA_5
+  
+  UITS_1 ~~ UITS_2 + UITS_3 + UITS_4 + UITS_5  
+  UITS_2 ~~ UITS_3 + UITS_4 + UITS_5 
+  UITS_3 ~~ UITS_4 + UITS_5 
+  UITS_4 ~~ UITS_5 
+  
+  TEVR_1 ~~ TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 
+  TEVR_2 ~~ TEVR_3 + TEVR_4 + TEVR_5
+  TEVR_3 ~~ TEVR_4 + TEVR_5
+  TEVR_4 ~~ TEVR_5
+  
+  BELA_1 ~~ BELA_2 + BELA_3 + BELA_4 + BELA_5
+  BELA_2 ~~ BELA_3 + BELA_4 + BELA_5
+  BELA_3 ~~ BELA_4 + BELA_5
+  BELA_4 ~~ BELA_5
+  
+  VERA_1 ~~ VERA_2 + VERA_3 + VERA_4 + VERA_5
+  VERA_2 ~~ VERA_3 + VERA_4 + VERA_5
+  VERA_3 ~~ VERA_4 + VERA_5
+  VERA_4 ~~ VERA_5
+&#39;
+
+fit_sem_cu &lt;- sem(model = sem_cu, data = dat_LS, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit_sem_cu)</code></pre>
+</div>
+<div id="mplus-9" class="section level4">
+<h4>Mplus</h4>
+<pre><code>TITLE:      The SEM CU model.
+          
+DATA:       FILE = LISS_LS_wide.dat;
+    
+VARIABLE:   NAMES = person house 
+                    IDEA1 UITS1 TEVR1 BELA1 VERA1 
+                    IDEA2 UITS2 TEVR2 BELA2 VERA2 
+                    IDEA3 UITS3 TEVR3 BELA3 VERA3 
+                    IDEA4 UITS4 TEVR4 BELA4 VERA4
+                    IDEA5 UITS5 TEVR5 BELA5 VERA5; 
+            MISSING = .;
+            USEVARIABLES = IDEA1-VERA5;
+
+ANALYSIS:   MODEL = NOCOV;
+
+MODEL:      ! Trait factor loadings
+            T BY IDEA1-VERA5;
+            
+            ! Trait variance (default)
+            T;
+            
+            ! State Residual factor loadings
+            SR1 BY IDEA1-VERA1;
+            SR2 BY IDEA2-VERA2;
+            SR3 BY IDEA3-VERA3;
+            SR4 BY IDEA4-VERA4;
+            SR5 BY IDEA5-VERA5;
+            
+            ! State Residual variances (default)
+            SR1-SR5;
+            
+            ! Correlated measurement errors between the same methods over time
+            IDEA1 WITH IDEA2 IDEA3 IDEA4 IDEA5; ! Method 1
+            IDEA2 WITH IDEA3 IDEA4 IDEA5;
+            IDEA3 WITH IDEA4 IDEA5;
+            IDEA4 WITH IDEA5;
+
+            UITS1 WITH UITS2 UITS3 UITS4 UITS5;
+            UITS2 WITH UITS3 UITS4 UITS5;
+            UITS3 WITH UITS4 UITS5;
+            UITS4 WITH UITS5;
+
+            TEVR1 WITH TEVR2 TEVR3 TEVR4 TEVR5;
+            TEVR2 WITH TEVR3 TEVR4 TEVR5;
+            TEVR3 WITH TEVR4 TEVR5;
+            TEVR4 WITH TEVR5;
+    
+            BELA1 WITH BELA2 BELA3 BELA4 BELA5;
+            BELA2 WITH BELA3 BELA4 BELA5;
+            BELA3 WITH BELA4 BELA5;
+            BELA4 WITH BELA5;
+
+            VERA1 WITH VERA2 VERA3 VERA4 VERA5;
+            VERA2 WITH VERA3 VERA4 VERA5;
+            VERA3 WITH VERA4 VERA5;
+            VERA4 WITH VERA5;
+
+OUTPUT:     SAMPSTAT  TECH1; </code></pre>
+<hr />
+</div>
+</div>
+<div id="stationary-sem-cu" class="section level3">
+<h3>Stationary SEM CU</h3>
+<div id="lavaan-10" class="section level4">
+<h4><em>lavaan</em></h4>
+<pre class="r"><code>stationary_cu &lt;- &#39;
+  # Trait factor loadings
+  T =~ g1*IDEA_1 + g2*UITS_1 + g3*TEVR_1 + g4*BELA_1 + g5*VERA_1 + 
+       g1*IDEA_2 + g2*UITS_2 + g3*TEVR_2 + g4*BELA_2 + g5*VERA_2 +
+       g1*IDEA_3 + g2*UITS_3 + g3*TEVR_3 + g4*BELA_3 + g5*VERA_3 +
+       g1*IDEA_4 + g2*UITS_4 + g3*TEVR_4 + g4*BELA_4 + g5*VERA_4 + 
+       g1*IDEA_5 + g2*UITS_5 + g3*TEVR_5 + g4*BELA_5 + g5*VERA_5
+        
+  # Trait factor variance
+  T ~~ T
+  
+  # State Residual factor loadings (constrained)
+  SR1 =~ k1*IDEA_1 + k2*UITS_1 + k3*TEVR_1 + k4*BELA_1 + k5*VERA_1  
+  SR2 =~ k1*IDEA_2 + k2*UITS_2 + k3*TEVR_2 + k4*BELA_2 + k5*VERA_2 
+  SR3 =~ k1*IDEA_3 + k2*UITS_3 + k3*TEVR_3 + k4*BELA_3 + k5*VERA_3
+  SR4 =~ k1*IDEA_4 + k2*UITS_4 + k3*TEVR_4 + k4*BELA_4 + k5*VERA_4 
+  SR5 =~ k1*IDEA_5 + k2*UITS_5 + k3*TEVR_5 + k4*BELA_5 + k5*VERA_5
+  
+  # State Residual variances (constrained)
+  SR1 ~~ vcs*SR1
+  SR2 ~~ vcs*SR2
+  SR3 ~~ vcs*SR3
+  SR4 ~~ vcs*SR4
+  SR5 ~~ vcs*SR5
+  
+  # Unique state variances (constrained)
+  IDEA_1 ~~ vus1*IDEA_1
+  UITS_1 ~~ vus2*UITS_1
+  TEVR_1 ~~ vus3*TEVR_1
+  BELA_1 ~~ vus4*BELA_1
+  VERA_1 ~~ vus5*VERA_1 
+  
+  IDEA_2 ~~ vus1*IDEA_2
+  UITS_2 ~~ vus2*UITS_2
+  TEVR_2 ~~ vus3*TEVR_2
+  BELA_2 ~~ vus4*BELA_2
+  VERA_2 ~~ vus5*VERA_2 
+  
+  IDEA_3 ~~ vus1*IDEA_3
+  UITS_3 ~~ vus2*UITS_3
+  TEVR_3 ~~ vus3*TEVR_3
+  BELA_3 ~~ vus4*BELA_3
+  VERA_3 ~~ vus5*VERA_3 
+  
+  IDEA_4 ~~ vus1*IDEA_4
+  UITS_4 ~~ vus2*UITS_4
+  TEVR_4 ~~ vus3*TEVR_4
+  BELA_4 ~~ vus4*BELA_4
+  VERA_4 ~~ vus5*VERA_4 
+  
+  IDEA_5 ~~ vus1*IDEA_5
+  UITS_5 ~~ vus2*UITS_5
+  TEVR_5 ~~ vus3*TEVR_5
+  BELA_5 ~~ vus4*BELA_5
+  VERA_5 ~~ vus5*VERA_5
+  
+  # Correlated measurement errors between the same methods over time 
+  IDEA_1 ~~ cov1*IDEA_2 + cov1*IDEA_3 + cov1*IDEA_4 + cov1*IDEA_5
+  IDEA_2 ~~ cov1*IDEA_3 + cov1*IDEA_4 + cov1*IDEA_5
+  IDEA_3 ~~ cov1*IDEA_4 + cov1*IDEA_5
+  IDEA_4 ~~ cov1*IDEA_5
+  
+  UITS_1 ~~ cov2*UITS_2 + cov2*UITS_3 + cov2*UITS_4 + cov2*UITS_5  
+  UITS_2 ~~ cov2*UITS_3 + cov2*UITS_4 + cov2*UITS_5 
+  UITS_3 ~~ cov2*UITS_4 + cov2*UITS_5 
+  UITS_4 ~~ cov2*UITS_5 
+  
+  TEVR_1 ~~ cov3*TEVR_2 + cov3*TEVR_3 + cov3*TEVR_4 + cov3*TEVR_5 
+  TEVR_2 ~~ cov3*TEVR_3 + cov3*TEVR_4 + cov3*TEVR_5
+  TEVR_3 ~~ cov3*TEVR_4 + cov3*TEVR_5
+  TEVR_4 ~~ cov3*TEVR_5
+  
+  BELA_1 ~~ cov4*BELA_2 + cov4*BELA_3 + cov4*BELA_4 + cov4*BELA_5
+  BELA_2 ~~ cov4*BELA_3 + cov4*BELA_4 + cov4*BELA_5
+  BELA_3 ~~ cov4*BELA_4 + cov4*BELA_5
+  BELA_4 ~~ cov4*BELA_5
+  
+  VERA_1 ~~ cov5*VERA_2 + cov5*VERA_3 + cov5*VERA_4 + cov5*VERA_5
+  VERA_2 ~~ cov5*VERA_3 + cov5*VERA_4 + cov5*VERA_5
+  VERA_3 ~~ cov5*VERA_4 + cov5*VERA_5
+  VERA_4 ~~ cov5*VERA_5
+  
+  # Means (constrained)
+  IDEA_1 + IDEA_2 + IDEA_3 + IDEA_4 + IDEA_5 ~ m1*1
+  UITS_1 + UITS_2 + UITS_3 + UITS_4 + UITS_5 ~ m2*1
+  TEVR_1 + TEVR_2 + TEVR_3 + TEVR_4 + TEVR_5 ~ m3*1
+  BELA_1 + BELA_2 + BELA_3 + BELA_4 + BELA_5 ~ m4*1
+  VERA_1 + VERA_2 + VERA_3 + VERA_4 + VERA_5 ~ m5*1 
+&#39;
+
+fit_stationary_cu &lt;- sem(model = stationary_cu, data = dat_LS, missing = &#39;ML&#39;, meanstructure = T, orthogonal = T)
+summary(fit_stationary_cu)</code></pre>
+</div>
+<div id="mplus-10" class="section level4">
+<h4>Mplus</h4>
+<pre><code>TITLE:      The SEM CU model with stationarity constraints over time.
+          
+DATA:       FILE = LISS_LS_wide.dat;
+    
+VARIABLE:   NAMES = person house 
+                    IDEA1 UITS1 TEVR1 BELA1 VERA1 
+                    IDEA2 UITS2 TEVR2 BELA2 VERA2 
+                    IDEA3 UITS3 TEVR3 BELA3 VERA3 
+                    IDEA4 UITS4 TEVR4 BELA4 VERA4
+                    IDEA5 UITS5 TEVR5 BELA5 VERA5; 
+            MISSING = .;
+            USEVARIABLES = IDEA1-VERA5;
+
+ANALYSIS:   MODEL = NOCOV;
+
+MODEL:      ! Trait factor loadings (constrained)
+            T BY IDEA1@1 UITS1 TEVR1 BELA1 VERA1 (g1-g5);
+            T BY IDEA2@1 UITS2 TEVR2 BELA2 VERA2 (g1-g5);
+            T BY IDEA3@1 UITS3 TEVR3 BELA3 VERA3 (g1-g5);
+            T BY IDEA4@1 UITS4 TEVR4 BELA4 VERA4 (g1-g5);
+            T BY IDEA5@1 UITS5 TEVR5 BELA5 VERA5 (g1-g5);
+            
+            ! Trait variance (default)
+            T;
+            
+            ! State Residual factors (constrained)
+            SR1 BY IDEA1-VERA1 (k1-k5);
+            SR2 BY IDEA2-VERA2 (k1-k5);
+            SR3 BY IDEA3-VERA3 (k1-k5);
+            SR4 BY IDEA4-VERA4 (k1-k5);
+            SR5 BY IDEA5-VERA5 (k1-k5);
+            
+            ! State Residual variances (constrained)
+            SR1-SR5 (vcs);
+            
+            ! Measurement error variances (constrained)
+            IDEA1 UITS1 TEVR1 BELA1 VERA1 (vus1-vus5);
+            IDEA2 UITS2 TEVR2 BELA2 VERA2 (vus1-vus5);
+            IDEA3 UITS3 TEVR3 BELA3 VERA3 (vus1-vus5);
+            IDEA4 UITS4 TEVR4 BELA4 VERA4 (vus1-vus5);
+            IDEA5 UITS5 TEVR5 BELA5 VERA5 (vus1-vus5);
+            
+            ! Correlated measurement errors between the same methods over time (constrained)
+            IDEA1 WITH IDEA2 IDEA3 IDEA4 IDEA5 (cov1);
+            IDEA2 WITH IDEA3 IDEA4 IDEA5 (cov1);
+            IDEA3 WITH IDEA4 IDEA5 (cov1);
+            IDEA4 WITH IDEA5 (cov1);
+            
+            UITS1 WITH UITS2 UITS3 UITS4 UITS5 (cov2);
+            UITS2 WITH UITS3 UITS4 UITS5 (cov2);
+            UITS3 WITH UITS4 UITS5 (cov2);
+            UITS4 WITH UITS5 (cov2);
+            
+            TEVR1 WITH TEVR2 TEVR3 TEVR4 TEVR5 (cov3);
+            TEVR2 WITH TEVR3 TEVR4 TEVR5 (cov3);
+            TEVR3 WITH TEVR4 TEVR5 (cov3);
+            TEVR4 WITH TEVR5 (cov3);
+    
+            BELA1 WITH BELA2 BELA3 BELA4 BELA5 (cov4);
+            BELA2 WITH BELA3 BELA4 BELA5 (cov4);
+            BELA3 WITH BELA4 BELA5 (cov4);
+            BELA4 WITH BELA5 (cov4);
+            
+            VERA1 WITH VERA2 VERA3 VERA4 VERA5 (cov5);
+            VERA2 WITH VERA3 VERA4 VERA5 (cov5);
+            VERA3 WITH VERA4 VERA5 (cov5);
+            VERA4 WITH VERA5 (cov5);
+            
+            ! Means (constrained)
+            [IDEA1 UITS1 TEVR1 BELA1 VERA1] (m1-m5);
+            [IDEA2 UITS2 TEVR2 BELA2 VERA2] (m1-m5);
+            [IDEA3 UITS3 TEVR3 BELA3 VERA3] (m1-m5);
+            [IDEA4 UITS4 TEVR4 BELA4 VERA4] (m1-m5);
+            [IDEA5 UITS5 TEVR5 BELA5 VERA5] (m1-m5);
+
+OUTPUT:     SAMPSTAT TECH1;</code></pre>
+</div>
+</div>
+</div>
+<div id="simulations-skewness" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">Simulations: Skewness</h2>
+<p>To explore the cause of the minor discrepancies in the variance decomposition of the CUTS and CU models on the one hand, and the IT and RI models on the other, two datasets were generated using Mplus according to the ML-SEM CUTS model: The first dataset is multivariate normally distributed, while the data in the second dataset is positively skewed. Next, both datasets were analyzed using the ML-SEM CUTS and the ML-SEM IT models, and parameter estimates were compared.</p>
+<div id="simulate-skewed---model-ml-sem-cuts" class="section level3">
+<h3>Simulate: Skewed - Model: ML-SEM CUTS</h3>
+<p>The below model syntax generates a positively skewed dataset from the ML-SEM CUTS model, and analyses it subsequently using the ML-SEM CUTS model.</p>
+<pre><code>TITLE: 
+    Simulation - CUTS model, parameter estimates based on analyses on 
+        Life Satisfaction survey from the LISS Panel
+    
+    Analysis - CUTS model, 5 indicators, waves 1-5, estimated in 
+        long-format (implicit stationarity constraints)
+    
+    Optionally - MCAR or skewed distribution (through mixture options)
+
+MONTECARLO:
+    NAMES = y1-y5;
+    NOBSERVATIONS = 21430;
+    NREPS = 1;
+    SEED = 20211027;
+    NCSIZES = 1; ! Number of unique cluster sizes
+    CSIZES = 4286 (5); ! Specify 4286 clusters of size 5
+    ! PATMISS = y1(.1) y2(.15) y3(.2) y4(.25) y5(.3); ! Proportion missing for each variable
+    ! PATPROBS = 1; 
+    GENCLASSES = c(2); ! Name categorical latent variables for generation (2 classes)
+    CLASSES = c(1); ! Categorical latent variable for estimation (1 class)
+    REPSAVE = ALL; 
+    SAVE = simulated_CUTS_long_free*.dat;
+
+MODEL POPULATION:
+    %WITHIN%
+    %OVERALL% ! At within-level, only a single class exists 
+    
+    [c#1*0]; ! Threshold latent categorical variable
+    
+    ! Common state factor loadings
+    cs BY y1*1 y2*1.055 y3*0.939 y4*0.749 y5*0.659; 
+    
+    ! Common state factor variance
+    cs*0.351;
+
+    ! Unique state factor variances
+    y1*0.278;
+    y2*0.287;
+    y3*0.243;
+    y4*0.512;
+    y5*0.921;
+    
+    %BETWEEN%
+    %OVERALL% 
+    
+    c#1*1;
+    
+    ! Common trait factor loadings
+    ct BY y1*1 y2*0.989 y3*0.881 y4*0.893 y5*1.036; 
+
+    ! Common trait factor variance and mean
+    ct*0.848; 
+    [ct*0];
+
+    ! Unique trait factor variances
+    y1*0.059;
+    y2*0.103; 
+    y3*0.075; 
+    y4*0.235;
+    y5*0.635; 
+
+    ! Means
+    [y1*5.014 y2*5.140 y3*5.459 y4*5.211 y5*4.496];
+    
+    ! Threshold latent categorical variable
+    [c#1*-1]; ! Determines class size
+
+    %c#1% ! Mixture analysis (impact skewed data)
+    [ct*3]; ! Common trait mean increased to 3
+
+
+ANALYSIS:
+    MODEL = NOCOV; ! Overrule defaults
+    TYPE = TWOLEVEL MIXTURE;
+    ESTIMATOR = ML;
+
+MODEL:
+    %WITHIN%
+    %OVERALL%
+    cs BY y1-y5; 
+    
+    %BETWEEN%
+    %OVERALL%
+    ct BY y1-y5;
+
+OUTPUT:
+    TECH1 TECH8 TECH9;</code></pre>
+</div>
+<div id="data-skewed---model-ml-sem-it" class="section level3">
+<h3>Data: Skewed - Model: ML-SEM IT</h3>
+<p>The below model syntax analyses the generated positively skewed dataset using the ML-SEM IT model.</p>
+<pre><code>TITLE: 
+    Data - Simulated (with skewness) from CUTS model
+    
+    Analysis - IT model, 5 indicators, waves 1-5, 
+        Estimated in long-format (implicit stationarity constraints)
+
+DATA: 
+    FILE = simulated_CUTS_long_free1.dat;
+
+VARIABLE:
+    NAMES = y1-y5 class id;
+    USEVARIABLES = y1-y5;
+    CLUSTER = id;
+    MISSING = ALL(999); 
+
+ANALYSIS:
+    TYPE = TWOLEVEL;
+    ESTIMATOR = ML;
+
+MODEL:
+    %WITHIN%
+    cs BY y1-y5; 
+    
+    %BETWEEN%
+    y1-y5; ! Indicator-specific trait factor variances
+    
+    ! Correlations between IT factors
+    y1 WITH y2-y5;
+    y2 WITH y3-y5;
+    y3 WITH y4 y5;
+    y4 WITH y5;
+
+OUTPUT:
+    TECH1 STDYX;</code></pre>
+<hr />
+</div>
+</div>
+<div id="simulations-missing" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">Simulations: Missing</h2>
+<p>To explore the cause of the minor discrepancies in the variance decomposition of the CUTS and CU models on the one hand, and the IT and RI models on the other, two datasets were generated using Mplus according to the ML-SEM CUTS model: The first dataset contains missing data (MCAR), while the second dataset is complete. Next, both datasets were analyzed using the ML-SEM CUTS and the ML-SEM IT models, and parameter estimates were compared.</p>
+<div id="simulate-mcar---model-ml-sem-cuts" class="section level3">
+<h3>Simulate: MCAR - Model: ML-SEM CUTS</h3>
+<p>The below model syntax generates a dataset from the ML-SEM CUTS model, with 10% to 30% missing data (MCAR) for each variable. It subsequently analyses the generated data using the ML-SEM CUTS model.</p>
+<pre><code>TITLE: 
+    Simulation - CUTS model, parameter estimates based on analyses on 
+        Life Satisfaction survey from the LISS Panel
+    
+    Analysis - CUTS model, 5 indicators, waves 1-5, estimated in 
+        long-format (implicit stationarity constraints)
+    
+    Optionally - MCAR or skewed distribution (through mixture options)
+
+MONTECARLO:
+    NAMES = y1-y5;
+    NOBSERVATIONS = 21430;
+    NREPS = 1;
+    SEED = 20211027;
+    NCSIZES = 1; ! Number of unique cluster sizes
+    CSIZES = 4286 (5); ! Specify 4286 clusters of size 5
+    PATMISS = y1(.1) y2(.15) y3(.2) y4(.25) y5(.3); ! Proportion missing for each variable
+    PATPROBS = 1; 
+    REPSAVE = ALL; 
+    SAVE = simulated_CUTS_long_free_MCAR*.dat;
+
+MODEL POPULATION:
+    %WITHIN%
+    ! Common state factor loadings
+    cs BY y1*1 y2*1.055 y3*0.939 y4*0.749 y5*0.659; 
+    
+    ! Common state factor variance
+    cs*0.351;
+
+    ! Unique state factor variances
+    y1*0.278;
+    y2*0.287;
+    y3*0.243;
+    y4*0.512;
+    y5*0.921;
+    
+    %BETWEEN%
+    ! Common trait factor loadings
+    ct BY y1*1 y2*0.989 y3*0.881 y4*0.893 y5*1.036; 
+
+    ! Common trait factor variance and mean
+    ct*0.848; 
+    [ct*0];
+
+    ! Unique trait factor variances
+    y1*0.059;
+    y2*0.103; 
+    y3*0.075; 
+    y4*0.235;
+    y5*0.635; 
+
+    ! Means
+    [y1*5.014 y2*5.140 y3*5.459 y4*5.211 y5*4.496];
+
+ANALYSIS:
+    MODEL = NOCOV; ! Overrule defaults
+    TYPE = TWOLEVEL;
+    ESTIMATOR = ML;
+
+MODEL:
+    %WITHIN%
+    cs BY y1-y5; 
+    
+    %BETWEEN%
+    ct BY y1-y5;
+
+OUTPUT:
+    TECH1 TECH8 TECH9;</code></pre>
+</div>
+<div id="data-mcar---model-ml-sem-it" class="section level3">
+<h3>Data: MCAR - Model: ML-SEM IT</h3>
+<pre><code>TITLE: 
+    Data - Simulated (with MCAR) from CUTS model
+    
+    Analysis - IT model, 5 indicators, waves 1-5, 
+        Estimated in long-format (implicit stationarity constraints)
+
+DATA: 
+    FILE = simulated_CUTS_long_free_MCAR1.dat;
+
+VARIABLE:
+    NAMES = y1-y5 class id;
+    USEVARIABLES = y1-y5;
+    CLUSTER = id;
+    MISSING = ALL(999); 
+
+ANALYSIS:
+    TYPE = TWOLEVEL;
+    ESTIMATOR = ML;
+
+MODEL:
+    %WITHIN%
+    cs BY y1-y5; 
+    
+    %BETWEEN%
+    y1-y5; ! Indicator-specific trait factor variances
+    
+    ! Correlations between IT factors
+    y1 WITH y2-y5;
+    y2 WITH y3-y5;
+    y3 WITH y4 y5;
+    y4 WITH y5;
+
+OUTPUT:
+    TECH1 STDYX;</code></pre>
+<hr />
+</div>
+</div>
+<div id="simulations-convergence" class="section level2 tabset tabset-fade">
+<h2 class="tabset tabset-fade">Simulations: Convergence</h2>
+<p>To explore potential convergence issues in the wide-format conceptualization of the CUTS model, we applied it to three other scales that have been included in the LISS panel data, namely the Positive and Negative Affect Scale (PANAS, 2 factors, 10 indicators per factor, 5 repeated measures, and a sample size of 4293), a self-esteem scale (SE, 1 factor, 10 indicators, 5 repeated measures, and a sample size of 4276), and a shortened self-esteem scale (SERU, 1 factor, 3 indicators, 5 repeated measures, and a sample size of 4276) by the Radboud University Nijmegen, the Netherlands. Below, you can find the Mplus model syntax for each analysis.</p>
+<div id="panas" class="section level3">
+<h3>PANAS</h3>
+<pre><code>TITLE: 
+    The Common and Unique Trait State (CUTS) model
+    PANAS survey from the LISS Panel
+    20 indicators, 2 factors, wave 1, 2, 4, 6, 7
+    Estimated in wide-format (free)
+
+DATA:
+    FILE = LISS_PANAS_wide.dat;
+    TYPE = INDIVIDUAL; ! Wide-format (default)
+
+    
+VARIABLE:
+    NAMES = id 
+            BELA1 VERO1 OPGE1 OVER1 STER1 SCHU1 PANI1
+            VIJA1 ENTH1 TROT1 PRIK1 ALER1 BESC1 GEIN1
+            NERV1 VAST1 OPLE1 ZENU1 ACTI1 BANG1
+             
+            BELA2 VERO2 OPGE2 OVER2 STER2 SCHU2 PANI2
+            VIJA2 ENTH2 TROT2 PRIK2 ALER2 BESC2 GEIN2
+            NERV2 VAST2 OPLE2 ZENU2 ACTI2 BANG2
+             
+            BELA3 VERO3 OPGE3 OVER3 STER3 SCHU3 PANI3
+            VIJA3 ENTH3 TROT3 PRIK3 ALER3 BESC3 GEIN3
+            NERV3 VAST3 OPLE3 ZENU3 ACTI3 BANG3
+             
+            BELA4 VERO4 OPGE4 OVER4 STER4 SCHU4 PANI4
+            VIJA4 ENTH4 TROT4 PRIK4 ALER4 BESC4 GEIN4
+            NERV4 VAST4 OPLE4 ZENU4 ACTI4 BANG4
+
+            BELA5 VERO5 OPGE5 OVER5 STER5 SCHU5 PANI5
+            VIJA5 ENTH5 TROT5 PRIK5 ALER5 BESC5 GEIN5
+            NERV5 VAST5 OPLE5 ZENU5 ACTI5 BANG5;
+    USEVARIABLES = BELA1-BANG5;
+    MISSING = .;
+
+ANALYSIS:
+    MODEL = NOCOV;
+
+MODEL:
+    ! Factor loadings common traits CT_PA and CT_NA
+    CT_PA BY BELA1 BELA2 BELA3 BELA4 BELA5 
+             OPGE1 OPGE2 OPGE3 OPGE4 OPGE5 
+             STER1 STER2 STER3 STER4 STER5
+             ENTH1 ENTH2 ENTH3 ENTH4 ENTH5
+             TROT1 TROT2 TROT3 TROT4 TROT5
+             ALER1 ALER2 ALER3 ALER4 ALER5
+             GEIN1 GEIN2 GEIN3 GEIN4 GEIN5
+        VAST1 VAST2 VAST3 VAST4 VAST5
+        OPLE1 OPLE2 OPLE3 OPLE4 OPLE5
+        ACTI1 ACTI2 ACTI3 ACTI4 ACTI5;
+        
+    
+    CT_NA BY VERO1 VERO2 VERO3 VERO4 VERO5
+        OVER1 OVER2 OVER3 OVER4 OVER5
+        SCHU1 SCHU2 SCHU3 SCHU4 SCHU5
+        PANI1 PANI2 PANI3 PANI4 PANI5
+        VIJA1 VIJA2 VIJA3 VIJA4 VIJA5
+        PRIK1 PRIK2 PRIK3 PRIK4 PRIK5
+        BESC1 BESC2 BESC3 BESC4 BESC5
+        NERV1 NERV2 NERV3 NERV4 NERV5
+        ZENU1 ZENU2 ZENU3 ZENU4 ZENU5
+        BANG1 BANG2 BANG3 BANG4 BANG5;
+        
+    
+    ! Variance CT (default)
+    CT_PA; 
+    CT_NA;
+    
+    ! Factor loadings unique traits UT
+    UT_BELA BY BELA1 BELA2 BELA3 BELA4 BELA5;
+    UT_OPGE BY OPGE1 OPGE2 OPGE3 OPGE4 OPGE5;
+    UT_STER BY STER1 STER2 STER3 STER4 STER5;
+    UT_ENTH BY ENTH1 ENTH2 ENTH3 ENTH4 ENTH5;
+    UT_TROT BY TROT1 TROT2 TROT3 TROT4 TROT5;
+    UT_ALER BY ALER1 ALER2 ALER3 ALER4 ALER5;
+    UT_GEIN BY GEIN1 GEIN2 GEIN3 GEIN4 GEIN5;
+    UT_VAST BY VAST1 VAST2 VAST3 VAST4 VAST5;
+    UT_OPLE BY OPLE1 OPLE2 OPLE3 OPLE4 OPLE5; 
+    UT_ACTI BY ACTI1 ACTI2 ACTI3 ACTI4 ACTI5;
+        
+    UT_VERO BY VERO1 VERO2 VERO3 VERO4 VERO5;
+    UT_OVER BY OVER1 OVER2 OVER3 OVER4 OVER5;
+    UT_SCHU BY SCHU1 SCHU2 SCHU3 SCHU4 SCHU5;
+    UT_PANI BY PANI1 PANI2 PANI3 PANI4 PANI5;
+    UT_VIJA BY VIJA1 VIJA2 VIJA3 VIJA4 VIJA5;
+    UT_PRIK BY PRIK1 PRIK2 PRIK3 PRIK4 PRIK5;
+    UT_BESC BY BESC1 BESC2 BESC3 BESC4 BESC5;
+    UT_NERV BY NERV1 NERV2 NERV3 NERV4 NERV5;
+    UT_ZENU BY ZENU1 ZENU2 ZENU3 ZENU4 ZENU5;
+    UT_BANG BY BANG1 BANG2 BANG3 BANG4 BANG5;
+
+    ! Factor loadings common state CS
+    CS1_PA BY BELA1 OPGE1 STER1 ENTH1 TROT1 ALER1 GEIN1 VAST1 OPLE1 ACTI1;
+    CS2_PA BY BELA2 OPGE2 STER2 ENTH2 TROT2 ALER2 GEIN2 VAST2 OPLE2 ACTI2;
+    CS3_PA BY BELA3 OPGE3 STER2 ENTH3 TROT3 ALER3 GEIN3 VAST3 OPLE3 ACTI3;
+    CS4_PA BY BELA4 OPGE4 STER4 ENTH4 TROT4 ALER4 GEIN4 VAST4 OPLE4 ACTI4;
+    CS5_PA BY BELA5 OPGE5 STER5 ENTH5 TROT5 ALER5 GEIN5 VAST5 OPLE5 ACTI5;
+
+    CS1_NA BY VERO1 OVER1 SCHU1 PANI1 VIJA1 PRIK1 BESC1 NERV1 ZENU1 BANG1;
+    CS2_NA BY VERO2 OVER2 SCHU2 PANI2 VIJA2 PRIK2 BESC2 NERV2 ZENU2 BANG2;
+    CS3_NA BY VERO3 OVER3 SCHU3 PANI3 VIJA3 PRIK3 BESC3 NERV3 ZENU3 BANG3;
+    CS4_NA BY VERO4 OVER4 SCHU4 PANI4 VIJA4 PRIK4 BESC4 NERV4 ZENU4 BANG4;
+    CS5_NA BY VERO5 OVER5 SCHU5 PANI5 VIJA5 PRIK5 BESC5 NERV5 ZENU5 BANG5;
+    
+    ! Specify the unique states US 
+    BELA1-BANG5;
+
+OUTPUT:
+    TECH1;</code></pre>
+</div>
+<div id="se" class="section level3">
+<h3>SE</h3>
+<pre><code>TITLE: 
+    The Common and Unique Trait State (CUTS) model
+    Rosenberg Self-Esteem scale from the LISS Panel
+    10 indicators, wave 1, 2, 4, 6, 7
+    Estimated in wide-format (free)
+
+DATA:
+    FILE = LISS_SE_wide2.dat;
+    TYPE = INDIVIDUAL; ! Wide-format (default)
+
+    
+VARIABLE:
+    NAMES = id 
+        WAAR1 KWAL1 MISL1 NETZ1 TROT1 POSI1 TEVR1 RESP1 NUTT1 DEUG1 
+        WAAR2 KWAL2 MISL2 NETZ2 TROT2 POSI2 TEVR2 RESP2 NUTT2 DEUG2 
+        WAAR3 KWAL3 MISL3 NETZ3 TROT3 POSI3 TEVR3 RESP3 NUTT3 DEUG3 
+        WAAR4 KWAL4 MISL4 NETZ4 TROT4 POSI4 TEVR4 RESP4 NUTT4 DEUG4
+        WAAR5 KWAL5 MISL5 NETZ5 TROT5 POSI5 TEVR5 RESP5 NUTT5 DEUG5;
+    USEVARIABLES = WAAR1-DEUG5;
+    MISSING = .;
+
+ANALYSIS:
+    MODEL = NOCOV;
+    ! STARTS = 20; 
+
+MODEL:
+    ! Factor loadings common traits CT
+    CT BY WAAR1 KWAL1 MISL1 NETZ1 TROT1 POSI1 TEVR1 RESP1 NUTT1 DEUG1 
+          WAAR2 KWAL2 MISL2 NETZ2 TROT2 POSI2 TEVR2 RESP2 NUTT2 DEUG2 
+          WAAR3 KWAL3 MISL3 NETZ3 TROT3 POSI3 TEVR3 RESP3 NUTT3 DEUG3 
+          WAAR4 KWAL4 MISL4 NETZ4 TROT4 POSI4 TEVR4 RESP4 NUTT4 DEUG4
+          WAAR5 KWAL5 MISL5 NETZ5 TROT5 POSI5 TEVR5 RESP5 NUTT5 DEUG5;  
+    
+    ! Variance CT (default)
+    CT; 
+
+    ! Factor loadings unique traits UT
+    UT_WAAR BY WAAR1 WAAR2 WAAR3 WAAR4 WAAR5;
+    UT_KWAL BY KWAL1 KWAL2 KWAL3 KWAL4 KWAL5;
+    UT_MISL BY MISL1 MISL2 MISL3 MISL4 MISL5;
+    UT_NETZ BY NETZ1 NETZ2 NETZ3 NETZ4 NETZ5;
+    UT_TROT BY TROT1 TROT2 TROT3 TROT4 TROT5;
+    UT_POSI BY POSI1 POSI2 POSI3 POSI4 POSI5;
+    UT_TEVR BY TEVR1 TEVR2 TEVR3 TEVR4 TEVR5; 
+    UT_RESP BY RESP1 RESP2 RESP3 RESP4 RESP5;
+    UT_NUTT BY NUTT1 NUTT2 NUTT3 NUTT4 NUTT5; 
+    UT_DEUG BY DEUG1 DEUG2 DEUG3 DEUG4 DEUG5;
+    
+    ! Factor loadings common state CS
+    CS1 BY WAAR1 KWAL1 MISL1 NETZ1 TROT1 POSI1 TEVR1 RESP1 NUTT1 DEUG1; 
+    CS2 BY WAAR2 KWAL2 MISL2 NETZ2 TROT2 POSI2 TEVR2 RESP2 NUTT2 DEUG2; 
+    CS3 BY WAAR3 KWAL3 MISL3 NETZ3 TROT3 POSI3 TEVR3 RESP3 NUTT3 DEUG3; 
+    CS4 BY WAAR4 KWAL4 MISL4 NETZ4 TROT4 POSI4 TEVR4 RESP4 NUTT4 DEUG4;
+    CS5 BY WAAR5 KWAL5 MISL5 NETZ5 TROT5 POSI5 TEVR5 RESP5 NUTT5 DEUG5;
+
+    ! Specify the unique states US 
+    WAAR1 KWAL1 MISL1 NETZ1 TROT1 POSI1 TEVR1 RESP1 NUTT1 DEUG1 
+    WAAR2 KWAL2 MISL2 NETZ2 TROT2 POSI2 TEVR2 RESP2 NUTT2 DEUG2 
+    WAAR3 KWAL3 MISL3 NETZ3 TROT3 POSI3 TEVR3 RESP3 NUTT3 DEUG3 
+    WAAR4 KWAL4 MISL4 NETZ4 TROT4 POSI4 TEVR4 RESP4 NUTT4 DEUG4
+    WAAR5 KWAL5 MISL5 NETZ5 TROT5 POSI5 TEVR5 RESP5 NUTT5 DEUG5;
+
+OUTPUT:
+    TECH1;</code></pre>
+</div>
+<div id="seru" class="section level3">
+<h3>SERU</h3>
+<pre><code>TITLE: 
+    The Common and Unique Trait State (CUTS) model
+    Radboud University Self-Esteem scale from the LISS Panel
+    3 indicators, wave 1, 2, 4, 6, 7
+    Estimated in wide-format (free)
+
+DATA:
+    FILE = LISS_SERU_wide.dat;
+    TYPE = INDIVIDUAL; ! Wide-format (default)
+
+    
+VARIABLE:
+    NAMES = id 
+        UITE1 GEVO1 CAPA1 
+        UITE2 GEVO2 CAPA2 
+        UITE3 GEVO3 CAPA3
+            UITE4 GEVO4 CAPA4 
+            UITE5 GEVO5 CAPA5; 
+    USEVARIABLES = UITE1-CAPA5;
+    MISSING = .;
+
+ANALYSIS:
+    MODEL = NOCOV;
+
+MODEL:
+    ! Factor loadings common traits CT
+    CT BY UITE1 GEVO1 CAPA1 
+          UITE2 GEVO2 CAPA2 
+          UITE3 GEVO3 CAPA3
+          UITE4 GEVO4 CAPA4 
+          UITE5 GEVO5 CAPA5; 
+            
+    ! Variance CT (default)
+    CT; 
+
+    ! Factor loadings unique traits UT
+    UT_UITE BY UITE1 UITE2 UITE3 UITE4 UITE5;
+    UT_GEVO BY GEVO1 GEVO2 GEVO3 GEVO4 GEVO5;
+    UT_CAPA BY CAPA1 CAPA2 CAPA3 CAPA4 CAPA5;
+    
+    ! Factor loadings common state CS
+    CS1 BY UITE1 GEVO1 CAPA1; 
+    CS2 BY UITE2 GEVO2 CAPA2; 
+    CS3 BY UITE3 GEVO3 CAPA3;
+        CS4 BY UITE4 GEVO4 CAPA4; 
+        CS5 BY UITE5 GEVO5 CAPA5; 
+    
+    ! Specify the unique states US 
+    UITE1-CAPA5; 
+
+OUTPUT:
+    TECH1;</code></pre>
+</div>
+</div>
+
+&nbsp;
+<hr />
+<!-- Add icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- Add font icons -->
+<p style="text-align: center;">
+    <a href="https://github.com/jeroendmulder/" class="fa fa-github"></a>
+    <a href="https://www.uu.nl/staff/JDMulder" class="fa fa-university"></a>
+</p>
+
+&nbsp;
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
